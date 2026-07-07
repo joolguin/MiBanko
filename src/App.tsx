@@ -1,7 +1,14 @@
+import { RouterProvider } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthProvider'
+import { RequireAuth } from './auth/RequireAuth'
+import { router } from './app/router'
+
 export default function App() {
   return (
-    <main className="min-h-[100dvh] flex items-center justify-center font-sans">
-      <p className="font-mono text-4xl text-accent-bright">$0</p>
-    </main>
+    <AuthProvider>
+      <RequireAuth>
+        <RouterProvider router={router} />
+      </RequireAuth>
+    </AuthProvider>
   )
 }
