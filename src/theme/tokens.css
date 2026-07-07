@@ -1,0 +1,6 @@
+:root {
+  color-scheme: dark;
+  --fresh-warn: #d4b483;
+}
+html, body, #root { min-height: 100dvh; background: #09090b; }
+body { color: #f4f4f5; -webkit-font-smoothing: antialiased; }
