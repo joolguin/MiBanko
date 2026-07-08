@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex-1 pb-24">{children}</div>
       <nav className="fixed bottom-0 inset-x-0 border-t border-ink-line bg-ink-1 flex items-center justify-around px-5 pt-3 pb-6">
         <NavItem to="/" active={pathname === '/'} label="Inicio" icon={<House size={22} />} />
-        <NavItem disabled label="Ciclo" icon={<CalendarBlank size={22} />} />
+        <NavItem to="/ciclo" active={pathname === '/ciclo'} label="Ciclo" icon={<CalendarBlank size={22} />} />
         <Link to="/registro" aria-label="Registrar"
           className="w-14 h-14 -mt-8 rounded-full bg-accent flex items-center justify-center border-4 border-ink active:scale-[0.97] transition-transform">
           <Plus size={26} weight="bold" className="text-accent-deep" />

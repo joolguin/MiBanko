@@ -46,3 +46,9 @@ npm test         # tests
 ```
 
 Requiere el usuario único creado en Supabase con signups deshabilitados.
+
+### Fase 2 — Ciclos
+
+Pantalla Ciclo (tab inferior): configurar fechas de BICE, ver el ciclo actual, cerrar ciclo
+(ingresando la boleta) y marcar pagada (baja el snapshot de Santander en el mismo paso).
+Las mutaciones de ciclo son funciones RPC transaccionales en Postgres (`close_cycle`, `pay_cycle`).
