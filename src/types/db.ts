@@ -109,6 +109,27 @@ export type Database = {
         }
         Relationships: []
       }
+      bice_config: {
+        Row: {
+          closing_day: number
+          due_day: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          closing_day: number
+          due_day: number
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          closing_day?: number
+          due_day?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -276,7 +297,23 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      close_cycle: {
+        Args: {
+          p_billed_amount: number
+          p_cycle_end: string
+          p_cycle_start: string
+          p_due_date: string
+        }
+        Returns: Json
+      }
+      pay_cycle: {
+        Args: {
+          p_cycle_id: string
+          p_nuevo_saldo: number
+          p_santander_account_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
