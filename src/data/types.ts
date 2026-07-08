@@ -35,3 +35,22 @@ export interface NewTransaction {
   description: string | null
   billingCycleId: string | null
 }
+
+export interface BiceConfig { closingDay: number; dueDay: number }
+export interface CycleDates { cycleStart: string; cycleEnd: string; dueDate: string }
+
+export interface BillingCycle {
+  id: string
+  cycleStart: string
+  cycleEnd: string
+  dueDate: string
+  billedAmount: number
+  isPaid: boolean
+}
+
+export interface CloseCycleResult {
+  cycleId: string
+  billedAmount: number
+  sumaLedger: number
+  diferencia: number
+}
