@@ -12,7 +12,7 @@ export function BiceConfigSheet({ open, initial, onClose }: Props) {
 
   function clamp(s: string): number { return Math.min(28, Math.max(1, Number(s) || 1)) }
   function submit() {
-    save?.mutate({ closingDay: clamp(closingDay), dueDay: clamp(dueDay) }, { onSuccess: onClose })
+    save.mutate({ closingDay: clamp(closingDay), dueDay: clamp(dueDay) }, { onSuccess: onClose })
   }
 
   return (
@@ -28,10 +28,10 @@ export function BiceConfigSheet({ open, initial, onClose }: Props) {
           <input inputMode="numeric" value={dueDay} onChange={(e) => setDueDay(e.target.value)}
             className="bg-ink-2 border border-ink-line rounded-lg px-3 py-2.5 outline-none focus:border-accent font-mono" />
         </label>
-        {save?.isError && <p className="text-debt text-sm">No se pudo guardar.</p>}
-        <button onClick={submit} disabled={save?.isPending || !closingDay || !dueDay}
+        {save.isError && <p className="text-debt text-sm">No se pudo guardar.</p>}
+        <button onClick={submit} disabled={save.isPending || !closingDay || !dueDay}
           className="bg-accent text-accent-deep font-medium rounded-xl py-3 active:scale-[0.98] transition-transform disabled:opacity-40">
-          {save?.isPending ? 'Guardando…' : 'Guardar'}
+          {save.isPending ? 'Guardando…' : 'Guardar'}
         </button>
       </div>
     </BottomSheet>

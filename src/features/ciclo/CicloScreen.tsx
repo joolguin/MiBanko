@@ -68,7 +68,7 @@ export function CicloScreen() {
       <UnpaidCyclesSection />
 
       <BiceConfigSheet open={sheet === 'config'} initial={config.data ?? null} onClose={() => setSheet(null)} />
-      {sheet === 'close' && hasConfig && (
+      {hasConfig && (
         <CloseCycleSheet open={sheet === 'close'} config={config.data!} onClose={() => setSheet(null)} onClosed={setDiff} />
       )}
     </section>

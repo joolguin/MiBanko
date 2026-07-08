@@ -8,8 +8,10 @@ import { CicloScreen } from './CicloScreen'
 vi.mock('./UnpaidCyclesSection', () => ({ UnpaidCyclesSection: () => null }))
 vi.mock('../../data/useCurrentCycle')
 vi.mock('../../data/useBiceConfig')
+vi.mock('../../data/useCloseCycle')
 import { useCurrentCycleTransactions } from '../../data/useCurrentCycle'
-import { useBiceConfig } from '../../data/useBiceConfig'
+import { useBiceConfig, useSaveBiceConfig } from '../../data/useBiceConfig'
+import { useCloseCycle } from '../../data/useCloseCycle'
 
 beforeEach(() => {
   vi.mocked(useCurrentCycleTransactions).mockReturnValue({
@@ -18,6 +20,8 @@ beforeEach(() => {
       { id: 't2', amount: 15000, description: 'Uber', transactionDate: '2026-07-02', categoryName: 'Transporte' },
     ], total: 40000 }, isLoading: false, isError: false,
   } as any)
+  vi.mocked(useSaveBiceConfig).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false } as any)
+  vi.mocked(useCloseCycle).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false } as any)
 })
 
 describe('CicloScreen', () => {

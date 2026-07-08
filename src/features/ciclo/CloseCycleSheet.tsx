@@ -23,7 +23,7 @@ export function CloseCycleSheet({ open, config, onClose, onClosed }: Props) {
 
   function submit() {
     const dates = deriveCycleDates(config, new Date())
-    close?.mutate({ billedAmount: billed, dates }, { onSuccess: (r) => { onClosed(r); onClose() } })
+    close.mutate({ billedAmount: billed, dates }, { onSuccess: (r) => { onClosed(r); onClose() } })
   }
 
   return (
@@ -31,10 +31,10 @@ export function CloseCycleSheet({ open, config, onClose, onClosed }: Props) {
       <div className="flex flex-col gap-4">
         <MoneyText value={billed} className="text-3xl text-zinc-50" />
         <NumberPad value={billed} onChange={setBilled} />
-        {close?.isError && <p className="text-debt text-sm">No se pudo cerrar. Reintentá.</p>}
-        <button onClick={submit} disabled={billed <= 0 || close?.isPending}
+        {close.isError && <p className="text-debt text-sm">No se pudo cerrar. Reintentá.</p>}
+        <button onClick={submit} disabled={billed <= 0 || close.isPending}
           className="bg-accent text-accent-deep font-medium rounded-xl py-3 active:scale-[0.98] transition-transform disabled:opacity-40">
-          {close?.isPending ? 'Cerrando…' : 'Cerrar ciclo'}
+          {close.isPending ? 'Cerrando…' : 'Cerrar ciclo'}
         </button>
       </div>
     </BottomSheet>
