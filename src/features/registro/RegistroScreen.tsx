@@ -1,0 +1,108 @@
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAccounts } from '../../data/useAccounts'
+import { useCategories } from '../../data/useCategories'
+import { useRegisterTransaction } from '../../data/useRegisterTransaction'
+import { NumberPad } from '../../components/ui/NumberPad'
+import { BottomSheet } from '../../components/ui/BottomSheet'
+import { Chip } from '../../components/ui/Chip'
+import { MoneyText } from '../../components/ui/MoneyText'
+import type { Account, Category, Channel, TxType } from '../../data/types'
+
+const CHANNELS: { id: Channel; label: string }[] = [
+  { id: 'wallet_pixel', label: 'Wallet Pixel' },
+  { id: 'tarjeta_fisica', label: 'Tarjeta física' },
+  { id: 'onepay', label: 'Onepay' },
+  { id: 'transferencia_app', label: 'Transferencia' },
+  { id: 'otro', label: 'Otro' },
+]
+
+export function RegistroScreen() {
+  const nav = useNavigate()
+  const accounts = useAccounts()
+  const categories = useCategories()
+  const register = useRegisterTransaction()
+
+  const [amount, setAmount] = useState(0)
+  const [accountId, setAccountId] = useState<string | null>(null)
+  const [channel, setChannel] = useState<Channel>('wallet_pixel')
+  const [categoryId, setCategoryId] = useState<string | null>(null)
+  const [description, setDescription] = useState('')
+  const [sheet, setSheet] = useState<null | 'account' | 'channel' | 'category'>(null)
+
+  // Default: primera cuenta (BICE por el orden de useAccounts).
+  const account: Account | undefined = useMemo(() => {
+    const list = accounts.data ?? []
+    return list.find((a) => a.id === accountId) ?? list[0]
+  }, [accounts.data, accountId])
+
+  const category: Category | undefined = categories.data?.find((c) => c.id === categoryId)
+  const type: TxType = 'gasto'
+  const canSave = amount > 0 && !!account && !register.isPending
+
+  function save() {
+    if (!account) return
+    register.mutate(
+      {
+        accountId: account.id, accountType: account.type, type,
+        amount, channel, categoryId, description: description || null,
+        billingCycleId: null,
+      },
+      { onSuccess: () => nav('/') },
+    )
+  }
+
+  return (
+    <section className="px-6 pt-8 flex flex-col min-h-[100dvh]">
+      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">monto</p>
+      <MoneyText value={amount} className="text-[52px] leading-none text-zinc-50 mt-1" />
+
+      <div className="flex flex-wrap gap-2 mt-6">
+        <Chip label={account?.name ?? 'Cuenta'} onClick={() => setSheet('account')} active />
+        <Chip label="Gasto" active />
+        <Chip label={CHANNELS.find((c) => c.id === channel)!.label} onClick={() => setSheet('channel')} active />
+        <Chip label={category?.name ?? 'Categoría'} onClick={() => setSheet('category')} active={!!category} />
+      </div>
+
+      <input value={description} onChange={(e) => setDescription(e.target.value)}
+        placeholder="Descripción (opcional)"
+        className="mt-4 bg-transparent border-b border-ink-line py-2 text-sm outline-none focus:border-accent placeholder:text-zinc-600" />
+
+      <div className="mt-auto pt-6">
+        <NumberPad value={amount} onChange={setAmount} />
+        {register.isError && <p className="text-debt text-sm mt-3">No se pudo guardar. Reintentá.</p>}
+        <button onClick={save} disabled={!canSave}
+          className="w-full mt-4 bg-accent text-accent-deep font-medium rounded-xl py-4 active:scale-[0.98] transition-transform disabled:opacity-40">
+          {register.isPending ? 'Guardando…' : 'Guardar'}
+        </button>
+      </div>
+
+      <BottomSheet open={sheet === 'account'} title="Cuenta" onClose={() => setSheet(null)}>
+        <div className="flex flex-col gap-1">
+          {(accounts.data ?? []).map((a) => (
+            <button key={a.id} onClick={() => { setAccountId(a.id); setSheet(null) }}
+              className="text-left py-2.5 px-2 rounded-lg active:bg-ink-2">{a.name}</button>
+          ))}
+        </div>
+      </BottomSheet>
+
+      <BottomSheet open={sheet === 'channel'} title="Canal" onClose={() => setSheet(null)}>
+        <div className="flex flex-col gap-1">
+          {CHANNELS.map((c) => (
+            <button key={c.id} onClick={() => { setChannel(c.id); setSheet(null) }}
+              className="text-left py-2.5 px-2 rounded-lg active:bg-ink-2">{c.label}</button>
+          ))}
+        </div>
+      </BottomSheet>
+
+      <BottomSheet open={sheet === 'category'} title="Categoría" onClose={() => setSheet(null)}>
+        <div className="flex flex-col gap-1">
+          {(categories.data ?? []).map((c) => (
+            <button key={c.id} onClick={() => { setCategoryId(c.id); setSheet(null) }}
+              className="text-left py-2.5 px-2 rounded-lg active:bg-ink-2">{c.name}</button>
+          ))}
+        </div>
+      </BottomSheet>
+    </section>
+  )
+}

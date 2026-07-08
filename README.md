@@ -35,3 +35,14 @@ slrd_inmediato = saldo_debito (Santander) − deuda_facturada − deuda_no_factu
 slrd_total     = slrd_inmediato + saldo_inversion (Fintual)
 saldo_contable = saldo_debito + saldo_inversion   -- el número "mentiroso"
 ```
+
+## App (Fase 1)
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev      # http://localhost:5173
+npm test         # tests
+```
+
+Requiere el usuario único creado en Supabase con signups deshabilitados.
