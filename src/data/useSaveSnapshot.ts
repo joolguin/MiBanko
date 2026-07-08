@@ -13,6 +13,7 @@ export function useSaveSnapshot() {
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ['slrd'] })
       qc.invalidateQueries({ queryKey: ['snapshot-age'] })
+      qc.invalidateQueries({ queryKey: ['latest-snapshots'] })
     },
   })
 }

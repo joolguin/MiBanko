@@ -17,6 +17,7 @@ export function usePayCycle() {
       qc.invalidateQueries({ queryKey: ['unpaid-cycles'] })
       qc.invalidateQueries({ queryKey: ['paid-cycles'] })
       qc.invalidateQueries({ queryKey: ['snapshot-age'] })
+      qc.invalidateQueries({ queryKey: ['latest-snapshots'] })
     },
   })
 }
