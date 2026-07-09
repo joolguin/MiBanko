@@ -20,4 +20,10 @@ describe('formatSignedCLP', () => {
   it('should_NoSign_When_Positive', () => {
     expect(formatSignedCLP(2000)).toBe('$2.000')
   })
+  it('should_PrependPlus_When_PositiveAndWithPlus', () => {
+    expect(formatSignedCLP(900000, true)).toBe('+$900.000')
+  })
+  it('should_NoPlus_When_ZeroAndWithPlus', () => {
+    expect(formatSignedCLP(0, true)).toBe('$0')
+  })
 })

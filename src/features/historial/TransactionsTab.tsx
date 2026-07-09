@@ -101,7 +101,8 @@ export function TransactionsTab(
                     <span className="text-sm text-zinc-200">{t.categoryName ?? TYPE_LABELS[t.type]}</span>
                     <span className="text-[11px] text-zinc-500">{t.transactionDate} · {t.accountName}</span>
                   </div>
-                  <MoneyText value={displayAmount(t)} signed className="text-sm text-zinc-300" />
+                  <MoneyText value={displayAmount(t)} signed withPlus
+                    className={`text-sm ${t.type === 'ingreso' ? 'text-accent-bright' : 'text-zinc-300'}`} />
                 </div>
               ))}
             </div>
