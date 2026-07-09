@@ -41,4 +41,9 @@ describe('SubscriptionsSection', () => {
     render(<SubscriptionsSection />)
     expect(screen.getByText(/no tenés suscripciones/i)).toBeInTheDocument()
   })
+  it('should_ShowInlineError_When_DeleteFails', () => {
+    vi.mocked(useDeleteSubscription).mockReturnValue({ mutate: del, isError: true } as any)
+    render(<SubscriptionsSection />)
+    expect(screen.getByText(/no se pudo actualizar/i)).toBeInTheDocument()
+  })
 })

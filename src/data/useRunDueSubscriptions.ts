@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 const KEY = 'mibanko:subs-run'
 
 export function todayKey(now: Date): string {
-  return now.toISOString().slice(0, 10)
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago' }).format(now)
 }
 
 export function shouldRun(storage: Pick<Storage, 'getItem'>, now: Date): boolean {

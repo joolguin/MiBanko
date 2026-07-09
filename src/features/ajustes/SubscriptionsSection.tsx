@@ -34,6 +34,10 @@ export function SubscriptionsSection() {
         </div>
       )}
 
+      {(toggle.isError || del.isError) && (
+        <p className="text-debt text-sm mt-3">No se pudo actualizar. Reintentá.</p>
+      )}
+
       {subs.data && subs.data.length === 0 && (
         <p className="text-sm text-zinc-500 mt-3">No tenés suscripciones. Agregá la primera.</p>
       )}
