@@ -28,7 +28,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="w-14 h-14 -mt-8 rounded-full bg-accent flex items-center justify-center border-4 border-ink active:scale-[0.97] transition-transform">
           <Plus size={26} weight="bold" className="text-accent-deep" />
         </Link>
-        <NavItem disabled label="Historial" icon={<ChartLine size={22} />} />
+        <NavItem to="/historial" active={pathname === '/historial'} label="Historial" icon={<ChartLine size={22} />} />
         <NavItem to="/ajustes" active={pathname === '/ajustes'} label="Ajustes" icon={<GearSix size={22} />} />
       </nav>
     </div>

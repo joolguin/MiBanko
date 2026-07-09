@@ -44,6 +44,17 @@ export interface Slrd {
   deudaNoFacturada: number
 }
 
+export interface SlrdHistoryPoint {
+  snapshotDate: string
+  slrdInmediato: number
+  slrdTotal: number
+  saldoContable: number
+  saldoDebito: number
+  saldoInversion: number
+  deudaFacturada: number
+  deudaNoFacturada: number
+}
+
 export interface NewTransaction {
   accountId: string
   accountType: AccountType
