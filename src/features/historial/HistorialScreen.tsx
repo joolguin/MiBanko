@@ -3,6 +3,7 @@ import { useSlrdHistory } from '../../data/useSlrdHistory'
 import { filterByRange, type ChartRange } from '../../data/chartScale'
 import { SlrdLineChart } from './SlrdLineChart'
 import { Skeleton } from '../../components/ui/Skeleton'
+import { MoneyText } from '../../components/ui/MoneyText'
 
 const MIN_POINTS_FOR_CHART = 2
 const RANGES: { value: ChartRange; label: string }[] = [
@@ -35,9 +36,16 @@ export function HistorialScreen() {
       )}
 
       {!history.isLoading && !history.isError && points.length < MIN_POINTS_FOR_CHART && (
-        <p className="text-sm text-zinc-500 mt-4">
-          El historial se arma solo: guardamos el SLRD de cada día. Volvé mañana para ver la tendencia.
-        </p>
+        <div className="mt-4">
+          <p className="text-sm text-zinc-500">
+            El historial se arma solo: guardamos el SLRD de cada día. Volvé mañana para ver la tendencia.
+          </p>
+          {points.length === 1 && (
+            <p className="text-sm text-zinc-400 mt-2">
+              SLRD de hoy: <MoneyText value={points[0].slrdInmediato} />
+            </p>
+          )}
+        </div>
       )}
 
       {!history.isLoading && !history.isError && points.length >= MIN_POINTS_FOR_CHART && (

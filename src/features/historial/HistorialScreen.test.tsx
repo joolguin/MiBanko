@@ -39,12 +39,24 @@ describe('HistorialScreen', () => {
 
   it('should_ShowCalmEmpty_When_FewerThanTwoPoints', () => {
     vi.mocked(useSlrdHistory).mockReturnValue({
+      isLoading: false, isError: false, data: [],
+    } as any)
+
+    render(<HistorialScreen />)
+
+    expect(screen.getByText(/el historial se arma solo/i)).toBeInTheDocument()
+  })
+
+  it('should_ShowCalmEmptyWithTodayValue_When_OnlyOnePointExists', () => {
+    vi.mocked(useSlrdHistory).mockReturnValue({
       isLoading: false, isError: false, data: [point('2026-07-09', 100)],
     } as any)
 
     render(<HistorialScreen />)
 
     expect(screen.getByText(/el historial se arma solo/i)).toBeInTheDocument()
+    expect(screen.getByText(/slrd de hoy/i)).toBeInTheDocument()
+    expect(screen.getByText('$100')).toBeInTheDocument()
   })
 
   it('should_RenderChart_When_EnoughPoints', () => {
