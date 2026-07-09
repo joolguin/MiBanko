@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SlrdLineChart } from './SlrdLineChart'
 import type { SlrdHistoryPoint } from '../../data/types'
@@ -41,6 +41,29 @@ describe('SlrdLineChart', () => {
 
     await user.click(screen.getByTestId('point-2026-07-09'))
     expect(screen.queryByTestId('tooltip-date')).not.toBeInTheDocument()
+  })
+
+  it('should_ToggleWithOneClick_When_MouseLeavesPinnedPointBeforeRetapping', async () => {
+    // Regresión: el ref viejo desincronizaba el "fijado" del estado visible al
+    // salir del punto con el mouse, y el próximo click sobre el mismo punto
+    // quedaba en no-op (recién el tercer click reabría). Con estado explícito,
+    // el pin sobrevive al mouseLeave y el click lo togglea en un solo paso.
+    const user = userEvent.setup()
+    render(<SlrdLineChart points={points} />)
+    const target = screen.getByTestId('point-2026-07-09')
+
+    await user.click(target)
+    expect(screen.getByTestId('tooltip-date')).toHaveTextContent('2026-07-09')
+
+    fireEvent.mouseLeave(target)
+    // El tooltip fijado no depende del hover: sigue visible al salir el mouse.
+    expect(screen.getByTestId('tooltip-date')).toHaveTextContent('2026-07-09')
+
+    await user.click(target)
+    expect(screen.queryByTestId('tooltip-date')).not.toBeInTheDocument()
+
+    await user.click(target)
+    expect(screen.getByTestId('tooltip-date')).toHaveTextContent('2026-07-09')
   })
 
   it('should_ShowMinMaxAxesAndFirstLastDates_When_GivenTwoOrMorePoints', () => {

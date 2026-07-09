@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { buildChart } from '../../data/chartScale'
 import type { SlrdHistoryPoint } from '../../data/types'
 import { MoneyText } from '../../components/ui/MoneyText'
@@ -8,29 +8,32 @@ const GEOMETRY = { width: 320, height: 160 }
 const DOT_RADIUS = 10 // radio del área táctil invisible por punto
 
 export function SlrdLineChart({ points }: { points: SlrdHistoryPoint[] }) {
-  const [active, setActive] = useState<SlrdHistoryPoint | null>(null)
+  // Dos estados independientes: `pinnedDate` es el punto fijado por click
+  // (toggle, persiste al sacar el mouse) y `hoveredDate` es el punto bajo
+  // el cursor (solo desktop). El pineado tiene prioridad sobre el hover.
+  const [pinnedDate, setPinnedDate] = useState<string | null>(null)
+  const [hoveredDate, setHoveredDate] = useState<string | null>(null)
   const chart = buildChart(points, GEOMETRY)
   const firstPoint = points[0]
   const lastPoint = points[points.length - 1]
 
-  // Rastrea el punto fijado por tap/click de forma independiente del hover:
-  // en touch (y en la simulación de userEvent) el mouseenter dispara justo
-  // antes del click, así que el toggle no puede depender de `active`.
-  const pinnedDateRef = useRef<string | null>(null)
+  const activeDate = pinnedDate ?? hoveredDate
+  const active = points.find((p) => p.snapshotDate === activeDate) ?? null
 
   function togglePinned(point: SlrdHistoryPoint) {
-    if (pinnedDateRef.current === point.snapshotDate) {
-      pinnedDateRef.current = null
-      setActive(null)
-    } else {
-      pinnedDateRef.current = point.snapshotDate
-      setActive(point)
-    }
+    setPinnedDate((current) => {
+      if (current === point.snapshotDate) {
+        // Clic explícito para cerrar: gana por sobre un hover que siga activo
+        // en el mismo punto (el mouse no se movió entre los dos clicks).
+        setHoveredDate((hovered) => (hovered === point.snapshotDate ? null : hovered))
+        return null
+      }
+      return point.snapshotDate
+    })
   }
 
   function closePinned() {
-    pinnedDateRef.current = null
-    setActive(null)
+    setPinnedDate(null)
   }
 
   return (
@@ -59,8 +62,8 @@ export function SlrdLineChart({ points }: { points: SlrdHistoryPoint[] }) {
             data-testid={`point-${p.snapshotDate}`}
             cx={chart.x(i)} cy={chart.y(p.slrdInmediato)} r={DOT_RADIUS}
             fill="transparent"
-            onMouseEnter={() => setActive(p)}
-            onMouseLeave={() => setActive(null)}
+            onMouseEnter={() => setHoveredDate(p.snapshotDate)}
+            onMouseLeave={() => setHoveredDate(null)}
             onClick={() => togglePinned(p)}
           />
         ))}

@@ -45,6 +45,8 @@ describe('HistorialScreen', () => {
     render(<HistorialScreen />)
 
     expect(screen.getByText(/el historial se arma solo/i)).toBeInTheDocument()
+    expect(screen.queryByText(/slrd de hoy/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('$100')).not.toBeInTheDocument()
   })
 
   it('should_ShowCalmEmptyWithTodayValue_When_OnlyOnePointExists', () => {
