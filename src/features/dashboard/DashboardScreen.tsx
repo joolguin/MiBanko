@@ -1,15 +1,20 @@
+import { useNavigate } from 'react-router-dom'
 import { useSlrd } from '../../data/useSlrd'
 import { useLatestSnapshotAge } from '../../data/useLatestSnapshotAge'
+import { useUserSettings } from '../../data/useUserSettings'
+import { isStale } from '../../data/freshness'
 import { CountUp } from '../../components/motion/CountUp'
 import { MoneyText } from '../../components/ui/MoneyText'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { WarningCircle } from '@phosphor-icons/react'
 
-const FRESH_LIMIT_DAYS = 7
-
 export function DashboardScreen() {
+  const nav = useNavigate()
   const slrd = useSlrd()
   const age = useLatestSnapshotAge()
+  const settings = useUserSettings()
+  const limit = settings.data?.freshLimitDays ?? 4
+  const stale = isStale(age.data ?? null, limit)
 
   if (slrd.isLoading) {
     return (
@@ -40,15 +45,22 @@ export function DashboardScreen() {
     <section className="px-6 pt-8">
       <header className="flex items-center justify-between">
         <span className="text-[15px] text-zinc-400">Hola, Josefa</span>
-        {age.data != null && age.data > FRESH_LIMIT_DAYS && (
-          <span className="text-[11px] text-[var(--fresh-warn)] border border-ink-line rounded-full px-2.5 py-1">
-            snapshot hace {age.data} días
+        {age.data != null && (
+          <span className={`text-[11px] px-2.5 py-1 ${stale
+            ? 'text-[var(--fresh-warn)] border border-ink-line rounded-full'
+            : 'text-zinc-500'}`}>
+            {stale ? `snapshot hace ${age.data} días` : `hace ${age.data} días`}
           </span>
         )}
-        {age.data != null && age.data <= FRESH_LIMIT_DAYS && (
-          <span className="text-[11px] text-zinc-500">hace {age.data} días</span>
-        )}
       </header>
+
+      {stale && (
+        <button onClick={() => nav('/snapshots')}
+          className="mt-4 w-full text-left bg-ink-2 border border-ink-line rounded-xl px-4 py-3 flex items-center justify-between active:scale-[0.99]">
+          <span className="text-sm text-zinc-300">Tu SLRD puede estar desactualizado — actualizá tus saldos</span>
+          <span className="text-accent-bright text-sm">Actualizar</span>
+        </button>
+      )}
 
       {sinDatos ? (
         <div className="mt-16 text-center">
@@ -59,7 +71,9 @@ export function DashboardScreen() {
         <>
           <div className="mt-8">
             <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">disponible de verdad</p>
-            <CountUp value={d.slrdInmediato} className="block text-[46px] leading-none text-accent-bright mt-1.5" />
+            <CountUp value={d.slrdInmediato}
+              className={`block text-[46px] leading-none mt-1.5 ${stale ? 'text-zinc-500' : 'text-accent-bright'}`} />
+            {stale && <p className="text-[11px] text-[var(--fresh-warn)] mt-1">estimado · snapshot viejo</p>}
             <div className="flex items-baseline gap-2 mt-2.5">
               <MoneyText value={d.saldoContable} className="text-base text-zinc-600 line-through decoration-debt" />
               <span className="text-xs text-zinc-600">lo que el banco te muestra</span>

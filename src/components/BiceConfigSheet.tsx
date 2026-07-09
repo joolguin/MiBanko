@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { BottomSheet } from '../../components/ui/BottomSheet'
-import { useSaveBiceConfig } from '../../data/useBiceConfig'
-import type { BiceConfig } from '../../data/types'
+import { BottomSheet } from './ui/BottomSheet'
+import { useSaveBiceConfig } from '../data/useBiceConfig'
+import type { BiceConfig } from '../data/types'
 
 interface Props { open: boolean; initial: BiceConfig | null; onClose: () => void }
 

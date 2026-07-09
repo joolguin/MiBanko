@@ -56,6 +56,7 @@ export interface NewTransaction {
 }
 
 export interface BiceConfig { closingDay: number; dueDay: number }
+export interface UserSettings { freshLimitDays: number }
 export interface CycleDates { cycleStart: string; cycleEnd: string; dueDate: string }
 
 export interface BillingCycle {
