@@ -24,12 +24,12 @@ export function computeCategorySpend(txs: MonthTx[]): CategorySpendSegment[] {
 
   const toPct = (amount: number): number => (total === 0 ? 0 : (amount / total) * 100)
   const segments: CategorySpendSegment[] = top.map((s) => ({
-    label: s.label, amount: s.amount, pct: toPct(s.amount),
+    label: s.label, amount: s.amount, pct: toPct(s.amount), isOther: false,
   }))
 
   if (rest.length > 0) {
     const otherAmount = rest.reduce((sum, s) => sum + s.amount, 0)
-    segments.push({ label: OTHER, amount: otherAmount, pct: toPct(otherAmount) })
+    segments.push({ label: OTHER, amount: otherAmount, pct: toPct(otherAmount), isOther: true })
   }
 
   return segments

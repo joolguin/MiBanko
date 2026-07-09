@@ -37,6 +37,32 @@ describe('TransactionsTab', () => {
     expect(refetch).toHaveBeenCalled()
   })
 
+  it('should_ShowIngresoWithPlusAndAccentColor_When_TypeIsIngreso', () => {
+    vi.mocked(useMonthTransactions).mockReturnValue({
+      isLoading: false, isError: false,
+      data: [tx({ type: 'ingreso', amount: 900000, categoryName: 'Sueldo', accountName: 'Santander', accountType: 'debit' })],
+    } as any)
+
+    render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
+
+    const amount = screen.getByText('+$900.000')
+    expect(amount).toBeInTheDocument()
+    expect(amount.className).toContain('text-accent-bright')
+  })
+
+  it('should_ShowGastoWithMinusAndNoAccent_When_TypeIsGasto', () => {
+    vi.mocked(useMonthTransactions).mockReturnValue({
+      isLoading: false, isError: false,
+      data: [tx({ type: 'gasto', amount: 12000, categoryName: 'Comida' })],
+    } as any)
+
+    render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
+
+    const amount = screen.getByText('−$12.000')
+    expect(amount).toBeInTheDocument()
+    expect(amount.className).not.toContain('text-accent-bright')
+  })
+
   // Nota: los nombres de categoría aparecen dos veces (fila de la lista y <option>
   // del filtro), así que las aserciones se acotan a la lista con data-testid.
   it('should_ListAllTx_When_NoFilterSelected', () => {

@@ -25,7 +25,7 @@ export function useSlrdHistory() {
         .select('snapshot_date, slrd_inmediato, slrd_total, saldo_contable, saldo_debito, saldo_inversion, deuda_facturada, deuda_no_facturada')
         .order('snapshot_date')
       if (error) throw error
-      return (data as Record<string, string | number | null>[]).map(mapSlrdHistoryRow)
+      return ((data ?? []) as Record<string, string | number | null>[]).map(mapSlrdHistoryRow)
     },
   })
 }

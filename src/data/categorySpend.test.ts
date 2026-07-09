@@ -17,8 +17,8 @@ describe('computeCategorySpend', () => {
     ])
 
     expect(result).toEqual([
-      { label: 'Comida', amount: 80, pct: 80 },
-      { label: 'Ocio', amount: 20, pct: 20 },
+      { label: 'Comida', amount: 80, pct: 80, isOther: false },
+      { label: 'Ocio', amount: 20, pct: 20, isOther: false },
     ])
   })
 
@@ -32,7 +32,7 @@ describe('computeCategorySpend', () => {
     const income: MonthTx = { ...gasto('Sueldo', 1000), type: 'ingreso' }
 
     expect(computeCategorySpend([income, gasto('Comida', 50)])).toEqual([
-      { label: 'Comida', amount: 50, pct: 100 },
+      { label: 'Comida', amount: 50, pct: 100, isOther: false },
     ])
   })
 
@@ -45,7 +45,13 @@ describe('computeCategorySpend', () => {
     const result = computeCategorySpend(txs)
 
     expect(result).toHaveLength(7) // 6 top + Otros
-    expect(result[6]).toEqual({ label: 'Otros', amount: 15, pct: (15 / 285) * 100 })
+    expect(result[6]).toEqual({ label: 'Otros', amount: 15, pct: (15 / 285) * 100, isOther: true })
+  })
+
+  it('should_NotMarkRealCategoryNamedOtros_When_ItIsAnActualCategory', () => {
+    const result = computeCategorySpend([gasto('Otros', 100)])
+
+    expect(result).toEqual([{ label: 'Otros', amount: 100, pct: 100, isOther: false }])
   })
 
   it('should_ReturnEmpty_When_NoGastos', () => {

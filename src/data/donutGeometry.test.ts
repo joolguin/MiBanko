@@ -3,7 +3,7 @@ import { donutDashes } from './donutGeometry'
 import type { CategorySpendSegment } from './types'
 
 function seg(label: string, pct: number): CategorySpendSegment {
-  return { label, amount: pct, pct }
+  return { label, amount: pct, pct, isOther: false }
 }
 
 describe('donutDashes', () => {

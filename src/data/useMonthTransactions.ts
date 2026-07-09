@@ -30,7 +30,7 @@ export function useMonthTransactions(month: MonthKey) {
         .lt('transaction_date', endExclusive)
         .order('transaction_date', { ascending: false })
       if (error) throw error
-      return (data as unknown as Record<string, unknown>[]).map(mapMonthTxRow)
+      return ((data ?? []) as unknown as Record<string, unknown>[]).map(mapMonthTxRow)
     },
   })
 }
