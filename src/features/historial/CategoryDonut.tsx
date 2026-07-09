@@ -6,8 +6,8 @@ import type { CategorySpendSegment } from '../../data/types'
 export const SEGMENT_COLORS = ['#3987e5', '#199e70', '#c98500', '#008300', '#9085e9', '#e66767']
 export const OTHER_COLOR = '#52525b'
 
-export function segmentColor(label: string, index: number): string {
-  if (label === 'Otros') return OTHER_COLOR
+export function segmentColor(isOther: boolean, index: number): string {
+  if (isOther) return OTHER_COLOR
   return SEGMENT_COLORS[index % SEGMENT_COLORS.length]
 }
 
@@ -30,7 +30,7 @@ export function CategoryDonut({ segments }: { segments: CategorySpendSegment[] }
             data-arc
             cx={CENTER} cy={CENTER} r={RADIUS}
             fill="none"
-            stroke={segmentColor(d.label, i)}
+            stroke={segmentColor(segments[i].isOther, i)}
             strokeWidth={STROKE}
             strokeDasharray={`${d.dash} ${CIRCUMFERENCE}`}
             strokeDashoffset={d.offset}

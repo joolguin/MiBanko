@@ -103,4 +103,7 @@ export interface CategorySpendSegment {
   label: string
   amount: number
   pct: number
+  // Marca el segmento sintético de agregación ("Otros"), para colorearlo como tal
+  // sin depender del texto del label (una categoría real podría llamarse "Otros").
+  isOther: boolean
 }
