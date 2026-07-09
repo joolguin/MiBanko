@@ -98,3 +98,9 @@ export interface MonthTx {
   accountName: string
   accountType: AccountType
 }
+
+export interface CategorySpendSegment {
+  label: string
+  amount: number
+  pct: number
+}
