@@ -64,3 +64,11 @@ end;
 $$;
 
 grant execute on function public.run_due_subscriptions() to authenticated;
+
+-- 4. Cron diario. 09:00 UTC ya es el nuevo día en Santiago (UTC-3/-4).
+create extension if not exists pg_cron;
+
+-- idempotente: desprograma un job previo con el mismo nombre antes de crearlo.
+select cron.unschedule(jobid) from cron.job where jobname = 'run-due-subscriptions';
+select cron.schedule('run-due-subscriptions', '0 9 * * *',
+  $$select public.run_due_subscriptions();$$);
