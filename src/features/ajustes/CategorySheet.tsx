@@ -12,6 +12,7 @@ export function CategorySheet({ open, initial, onClose }: Props) {
   useEffect(() => {
     if (!open) return
     setName(initial?.name ?? '')
+    save.reset()
   }, [open, initial])
 
   const canSave = name.trim().length > 0 && !save.isPending

@@ -12,7 +12,7 @@ beforeEach(() => {
   vi.mocked(useCategories).mockReturnValue({ data: [
     { id: 'c1', name: 'Comida' },
   ], isLoading: false, isError: false } as any)
-  vi.mocked(useSaveCategory).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false } as any)
+  vi.mocked(useSaveCategory).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false, reset: vi.fn() } as any)
   vi.mocked(useDeleteCategory).mockReturnValue({ mutate: del, isError: false } as any)
 })
 
@@ -36,7 +36,7 @@ describe('CategoriesSection', () => {
   })
   it('should_ShowDuplicateError_When_SaveFails', async () => {
     const user = userEvent.setup()
-    vi.mocked(useSaveCategory).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: true } as any)
+    vi.mocked(useSaveCategory).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: true, reset: vi.fn() } as any)
     render(<CategoriesSection />)
     await user.click(screen.getByRole('button', { name: /agregar categoría/i }))
     expect(screen.getByText(/ya existe una categoría con ese nombre/i)).toBeInTheDocument()

@@ -23,4 +23,13 @@ describe('FreshnessSection', () => {
     await user.click(screen.getByRole('button', { name: /guardar umbral/i }))
     expect(save).toHaveBeenCalledWith({ freshLimitDays: 10 })
   })
+  it('should_ClampThreshold_When_OutOfRange', async () => {
+    const user = userEvent.setup()
+    render(<FreshnessSection />)
+    const input = screen.getByRole('textbox')
+    await user.clear(input)
+    await user.type(input, '100')
+    await user.click(screen.getByRole('button', { name: /guardar umbral/i }))
+    expect(save).toHaveBeenCalledWith({ freshLimitDays: 60 })
+  })
 })
