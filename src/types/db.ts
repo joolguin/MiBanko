@@ -195,6 +195,48 @@ export type Database = {
           },
         ]
       }
+      slrd_history: {
+        Row: {
+          created_at: string
+          deuda_facturada: number
+          deuda_no_facturada: number
+          id: string
+          saldo_contable: number
+          saldo_debito: number
+          saldo_inversion: number
+          slrd_inmediato: number
+          slrd_total: number
+          snapshot_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deuda_facturada: number
+          deuda_no_facturada: number
+          id?: string
+          saldo_contable: number
+          saldo_debito: number
+          saldo_inversion: number
+          slrd_inmediato: number
+          slrd_total: number
+          snapshot_date: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deuda_facturada?: number
+          deuda_no_facturada?: number
+          id?: string
+          saldo_contable?: number
+          saldo_debito?: number
+          saldo_inversion?: number
+          slrd_inmediato?: number
+          slrd_total?: number
+          snapshot_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           account_id: string
@@ -206,6 +248,7 @@ export type Database = {
           description: string | null
           id: string
           source: string
+          subscription_id: string | null
           transaction_date: string
           type: string
           user_id: string
@@ -220,6 +263,7 @@ export type Database = {
           description?: string | null
           id?: string
           source?: string
+          subscription_id?: string | null
           transaction_date?: string
           type: string
           user_id?: string
@@ -234,6 +278,7 @@ export type Database = {
           description?: string | null
           id?: string
           source?: string
+          subscription_id?: string | null
           transaction_date?: string
           type?: string
           user_id?: string
@@ -260,7 +305,32 @@ export type Database = {
             referencedRelation: "categories"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "transactions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "fixed_subscriptions"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      user_settings: {
+        Row: {
+          fresh_limit_days: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          fresh_limit_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          fresh_limit_days?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -314,6 +384,8 @@ export type Database = {
         }
         Returns: undefined
       }
+      run_due_subscriptions: { Args: never; Returns: number }
+      snapshot_slrd: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never

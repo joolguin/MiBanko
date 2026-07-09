@@ -85,3 +85,22 @@ export interface CloseCycleResult {
   sumaLedger: number
   diferencia: number
 }
+
+export type MonthKey = string // 'AAAA-MM'
+
+export interface MonthTx {
+  id: string
+  transactionDate: string
+  amount: number
+  type: TxType
+  channel: Channel | null
+  categoryName: string | null
+  accountName: string
+  accountType: AccountType
+}
+
+export interface CategorySpendSegment {
+  label: string
+  amount: number
+  pct: number
+}
