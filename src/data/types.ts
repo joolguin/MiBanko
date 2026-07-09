@@ -15,6 +15,25 @@ export interface Category {
   name: string
 }
 
+export interface Subscription {
+  id: string
+  name: string
+  amount: number
+  chargeDayOfMonth: number
+  categoryId: string | null
+  channel: Channel
+  isActive: boolean
+}
+
+export interface SubscriptionInput {
+  id?: string
+  name: string
+  amount: number
+  chargeDayOfMonth: number
+  categoryId: string | null
+  channel: Channel
+}
+
 export interface Slrd {
   slrdInmediato: number
   slrdTotal: number
