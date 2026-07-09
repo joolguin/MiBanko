@@ -27,7 +27,28 @@ describe('SlrdLineChart', () => {
 
     await user.hover(screen.getByTestId('point-2026-07-09'))
 
-    expect(screen.getByText('2026-07-09')).toBeInTheDocument()
+    expect(screen.getByTestId('tooltip-date')).toHaveTextContent('2026-07-09')
     expect(screen.getByText('$150')).toBeInTheDocument()
+  })
+
+  it('should_ToggleTooltip_When_PointTapped', async () => {
+    const user = userEvent.setup()
+    render(<SlrdLineChart points={points} />)
+
+    await user.click(screen.getByTestId('point-2026-07-09'))
+    expect(screen.getByTestId('tooltip-date')).toHaveTextContent('2026-07-09')
+    expect(screen.getByText('$150')).toBeInTheDocument()
+
+    await user.click(screen.getByTestId('point-2026-07-09'))
+    expect(screen.queryByTestId('tooltip-date')).not.toBeInTheDocument()
+  })
+
+  it('should_ShowMinMaxAxesAndFirstLastDates_When_GivenTwoOrMorePoints', () => {
+    render(<SlrdLineChart points={points} />)
+
+    expect(screen.getByText('$250')).toBeInTheDocument() // yMax: max(100,200,150,250)
+    expect(screen.getByText('$100')).toBeInTheDocument() // yMin
+    expect(screen.getByTestId('chart-first-date')).toHaveTextContent('2026-07-08')
+    expect(screen.getByTestId('chart-last-date')).toHaveTextContent('2026-07-09')
   })
 })
