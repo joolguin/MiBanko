@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useMonthTransactions } from '../../data/useMonthTransactions'
 import { MonthNav } from './MonthNav'
 import { Skeleton } from '../../components/ui/Skeleton'
@@ -27,6 +27,15 @@ export function TransactionsTab(
   const [category, setCategory] = useState(ALL)
   const [type, setType] = useState(ALL)
   const [account, setAccount] = useState(ALL)
+
+  // Los filtros no deben sobrevivir a un cambio de mes: si quedaran aplicados,
+  // el <select> podría mostrar un value sin <option> y la lista se vería vacía
+  // aunque el mes tenga movimientos.
+  useEffect(() => {
+    setCategory(ALL)
+    setType(ALL)
+    setAccount(ALL)
+  }, [month])
 
   const all = txs.data ?? []
   const categories = uniqueSorted(all.map((t) => t.categoryName))

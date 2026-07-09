@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { TransactionsTab } from './TransactionsTab'
 import { useMonthTransactions } from '../../data/useMonthTransactions'
@@ -63,6 +63,27 @@ describe('TransactionsTab', () => {
     const rows = screen.getAllByTestId('tx-row')
     expect(rows).toHaveLength(1)
     expect(within(rows[0]).getByText('Ocio')).toBeInTheDocument()
+  })
+
+  it('should_ResetFilters_When_MonthChanges', async () => {
+    vi.mocked(useMonthTransactions).mockReturnValue({
+      isLoading: false, isError: false,
+      data: [tx({ categoryName: 'Comida' }), tx({ categoryName: 'Ocio' })],
+    } as any)
+    const user = userEvent.setup()
+
+    const { rerender } = render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
+    await user.selectOptions(screen.getByLabelText('Categoría'), 'Ocio')
+    expect(screen.getAllByTestId('tx-row')).toHaveLength(1)
+
+    vi.mocked(useMonthTransactions).mockReturnValue({
+      isLoading: false, isError: false,
+      data: [tx({ categoryName: 'Comida' }), tx({ categoryName: 'Comida' })],
+    } as any)
+    rerender(<TransactionsTab month="2026-06" onMonthChange={vi.fn()} />)
+
+    await waitFor(() => expect(screen.getAllByTestId('tx-row')).toHaveLength(2))
+    expect(screen.getByLabelText('Categoría')).toHaveValue('todas')
   })
 
   it('should_ShowCalmEmpty_When_NoTxMatch', () => {
