@@ -85,3 +85,5 @@ export interface CloseCycleResult {
   sumaLedger: number
   diferencia: number
 }
+
+export type MonthKey = string // 'AAAA-MM'
