@@ -87,3 +87,14 @@ export interface CloseCycleResult {
 }
 
 export type MonthKey = string // 'AAAA-MM'
+
+export interface MonthTx {
+  id: string
+  transactionDate: string
+  amount: number
+  type: TxType
+  channel: Channel | null
+  categoryName: string | null
+  accountName: string
+  accountType: AccountType
+}
