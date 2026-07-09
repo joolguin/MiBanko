@@ -53,9 +53,9 @@ export function SlrdLineChart({ points }: { points: SlrdHistoryPoint[] }) {
           onClick={closePinned}
         />
         <path data-series="saldoContable" d={chart.series[1].path}
-          fill="none" stroke="#52525b" strokeWidth={1.5} strokeDasharray="4 3" />
+          fill="none" className="stroke-zinc-500" strokeWidth={1.5} strokeDasharray="4 3" />
         <path data-series="slrdInmediato" d={chart.series[0].path}
-          fill="none" stroke="#34d399" strokeWidth={2} />
+          fill="none" className="stroke-accent-bright" strokeWidth={2} />
         {points.map((p, i) => (
           <circle
             key={p.snapshotDate}
