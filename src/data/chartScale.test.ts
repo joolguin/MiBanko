@@ -29,6 +29,13 @@ describe('filterByRange', () => {
 
     expect(result).toHaveLength(3)
   })
+
+  it('should_IncludeBoundaryDay_When_ExactlyNDaysAgo', () => {
+    // today 2026-07-09 en Santiago; 30d atrás = 2026-06-09 (borde inclusivo).
+    const boundary = filterByRange([point('2026-06-09', 1, 1)], '30d', today)
+
+    expect(boundary).toHaveLength(1)
+  })
 })
 
 describe('buildChart', () => {
@@ -47,6 +54,19 @@ describe('buildChart', () => {
 
     expect(chart.x(0)).toBe(0)
     expect(chart.x(1)).toBe(300)
+  })
+
+  it('should_SpaceXByRealDate_When_DaysAreMissing', () => {
+    // 08 → 09 → 13: el punto del medio (1 de 5 días) va al 20% del ancho, no al 50%.
+    const gapped = [
+      point('2026-07-08', 0, 0), point('2026-07-09', 0, 0), point('2026-07-13', 0, 0),
+    ]
+
+    const chart = buildChart(gapped, geo)
+
+    expect(chart.x(0)).toBe(0)
+    expect(chart.x(1)).toBeCloseTo(60)  // (1/5) * 300
+    expect(chart.x(2)).toBe(300)
   })
 
   it('should_MapMaxValue_ToTopAndMinToBottom', () => {
