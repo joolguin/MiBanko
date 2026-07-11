@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import type { UserSettings } from './types'
 
-const DEFAULT_FRESH_LIMIT_DAYS = 4
+export const DEFAULT_FRESH_LIMIT_DAYS = 4
 
 export function mapSettingsRow(row: { fresh_limit_days: number } | null): UserSettings {
   if (!row) return { freshLimitDays: DEFAULT_FRESH_LIMIT_DAYS }

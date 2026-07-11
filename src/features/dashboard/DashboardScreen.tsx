@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useSlrd } from '../../data/useSlrd'
 import { useLatestSnapshotAge } from '../../data/useLatestSnapshotAge'
-import { useUserSettings } from '../../data/useUserSettings'
+import { useUserSettings, DEFAULT_FRESH_LIMIT_DAYS } from '../../data/useUserSettings'
 import { isStale } from '../../data/freshness'
 import { CountUp } from '../../components/motion/CountUp'
 import { MoneyText } from '../../components/ui/MoneyText'
@@ -13,7 +13,7 @@ export function DashboardScreen() {
   const slrd = useSlrd()
   const age = useLatestSnapshotAge()
   const settings = useUserSettings()
-  const limit = settings.data?.freshLimitDays ?? 4
+  const limit = settings.data?.freshLimitDays ?? DEFAULT_FRESH_LIMIT_DAYS
   const stale = isStale(age.data ?? null, limit)
 
   if (slrd.isLoading) {

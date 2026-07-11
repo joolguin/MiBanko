@@ -9,3 +9,19 @@ dist/
 .supabase/
 .venv
 .superpowers/
+# Added by code-review-graph
+.code-review-graph/
+.mcp.json
+.opencode.json
+.cursorrules
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+QODER.md
+.claude/
+.gemini/
+.github/
+.kiro/
+.qoder/
+.vscode/
