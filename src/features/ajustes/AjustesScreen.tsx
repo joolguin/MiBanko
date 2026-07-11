@@ -10,7 +10,7 @@ export function AjustesScreen() {
       <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">ajustes</p>
       <Link to="/importar"
         className="bg-ink-2 border border-ink-line rounded-xl px-4 py-3 flex items-center justify-between active:scale-[0.99]">
-        <span className="text-sm text-zinc-200">Importar movimientos (cartola BICE Visa)</span>
+        <span className="text-sm text-zinc-200">Importar movimientos (BICE Visa o Santander)</span>
         <span className="text-accent-bright text-sm">Importar</span>
       </Link>
       <SubscriptionsSection />

@@ -10,6 +10,11 @@ import { useImportPreview } from '../../data/useImportPreview'
 import { useImportTransactions } from '../../data/useImportTransactions'
 
 vi.mock('../../parsers/biceVisaCsv')
+vi.mock('../../parsers/santanderPdfExtract', () => ({
+  parseSantanderPdf: vi.fn().mockResolvedValue([
+    { date: '2026-06-01', amount: 1750, description: 'Compra Nacional STA. ISABEL AP', kind: 'gasto' },
+  ]),
+}))
 vi.mock('../../data/useAccounts')
 vi.mock('../../data/useCategories')
 vi.mock('../../data/useImportPreview')
@@ -19,7 +24,10 @@ const mutate = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
-  vi.mocked(useAccounts).mockReturnValue({ data: [{ id: 'acc-bice', name: 'BICE Visa Gold', type: 'credit', bank: 'BICE' }] } as any)
+  vi.mocked(useAccounts).mockReturnValue({ data: [
+    { id: 'acc-bice', name: 'BICE Visa Gold', type: 'credit', bank: 'BICE' },
+    { id: 'acc-santander', name: 'Santander Vista', type: 'debit', bank: 'Santander' },
+  ] } as any)
   vi.mocked(useCategories).mockReturnValue({ data: [{ id: 'cat-transporte', name: 'Transporte' }] } as any)
   vi.mocked(useImportPreview).mockReturnValue({ data: [] } as any)
   vi.mocked(useImportTransactions).mockReturnValue({ mutate, isPending: false, isError: false } as any)
@@ -108,5 +116,33 @@ describe('ImportScreen', () => {
     await screen.findByText(/no se reconocieron movimientos/i)
     expect(screen.queryByText('Google Play')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /importar/i })).not.toBeInTheDocument()
+  })
+
+  it('should_ImportToDebitAccount_When_SantanderSourceSelected', async () => {
+    const user = userEvent.setup()
+    renderScreen()
+
+    await user.click(screen.getByRole('button', { name: /santander/i }))
+    const file = new File(['x'], 'cartola.pdf', { type: 'application/pdf' })
+    await user.upload(screen.getByLabelText(/archivo/i), file)
+    await screen.findByText('Compra Nacional STA. ISABEL AP')
+    await user.click(screen.getByRole('button', { name: /importar/i }))
+
+    await waitFor(() => expect(mutate).toHaveBeenCalled())
+    const payload = mutate.mock.calls[0][0]
+    expect(payload.accountId).toBe('acc-santander')
+    expect(payload.billingCycleId).toBeNull()
+  })
+
+  it('should_ShowNoSlrdImpact_When_SantanderSourceSelected', async () => {
+    const user = userEvent.setup()
+    renderScreen()
+
+    await user.click(screen.getByRole('button', { name: /santander/i }))
+    const file = new File(['x'], 'cartola.pdf', { type: 'application/pdf' })
+    await user.upload(screen.getByLabelText(/archivo/i), file)
+    await screen.findByText('Compra Nacional STA. ISABEL AP')
+
+    expect(screen.getByText(/no afecta tu slrd/i)).toBeInTheDocument()
   })
 })

@@ -12,6 +12,8 @@ import { MoneyText } from '../../components/ui/MoneyText'
 import type { RawMovement } from '../../parsers/types'
 import type { Category } from '../../data/types'
 
+type Source = 'bice_visa' | 'santander_vista'
+
 function resolveCategoryId(m: RawMovement, categories: Category[]): string | null {
   const name = mapBankCategory(m.bankCategory)
   if (!name) return null
@@ -24,12 +26,15 @@ export function ImportScreen() {
   const categories = useCategories()
   const importTx = useImportTransactions()
 
+  const [source, setSource] = useState<Source>('bice_visa')
   const [movements, setMovements] = useState<RawMovement[] | null>(null)
   const [rows, setRows] = useState<PreviewRow[]>([])
   const [parseError, setParseError] = useState(false)
   const [parseEmpty, setParseEmpty] = useState(false)
 
-  const biceAccount = accounts.data?.find((a) => a.type === 'credit')
+  const account = accounts.data?.find((a) =>
+    source === 'bice_visa' ? a.type === 'credit' : a.type === 'debit',
+  )
 
   const range = useMemo(() => {
     if (!movements || movements.length === 0) return null
@@ -37,7 +42,7 @@ export function ImportScreen() {
     return { from: dates[0], to: dates[dates.length - 1] }
   }, [movements])
 
-  const preview = useImportPreview(biceAccount?.id, range)
+  const preview = useImportPreview(account?.id, range)
 
   const builtForRef = useRef<RawMovement[] | null>(null)
 
@@ -64,7 +69,9 @@ export function ImportScreen() {
     setMovements(null)
     setRows([])
     try {
-      const parsed = await parseBiceVisaCsv(file)
+      const parsed = source === 'bice_visa'
+        ? await parseBiceVisaCsv(file)
+        : await (await import('../../parsers/santanderPdfExtract')).parseSantanderPdf(file)
       if (parsed.length === 0) {
         setParseEmpty(true)
         return
@@ -75,6 +82,14 @@ export function ImportScreen() {
     }
   }
 
+  function selectSource(next: Source) {
+    setSource(next)
+    setMovements(null)
+    setRows([])
+    setParseError(false)
+    setParseEmpty(false)
+  }
+
   function patchRow(index: number, patch: Partial<PreviewRow>) {
     setRows((rs) => rs.map((r, i) => (i === index ? { ...r, ...patch } : r)))
   }
@@ -83,9 +98,9 @@ export function ImportScreen() {
   const slrdDrop = selected.filter((r) => r.kind === 'gasto').reduce((s, r) => s + r.amount, 0)
 
   function confirm() {
-    if (!biceAccount || selected.length === 0) return
+    if (!account || selected.length === 0) return
     importTx.mutate({
-      accountId: biceAccount.id,
+      accountId: account.id,
       billingCycleId: null,
       rows: selected.map((r) => ({
         date: r.date, amount: r.amount, description: r.description, kind: r.kind, categoryId: r.categoryId,
@@ -95,16 +110,25 @@ export function ImportScreen() {
 
   return (
     <section className="px-6 pt-8 flex flex-col gap-4">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">importar · BICE Visa</p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">importar movimientos</p>
+
+      <div className="flex gap-2">
+        <button onClick={() => selectSource('bice_visa')}
+          className={`rounded-lg px-3 py-1.5 text-sm ${source === 'bice_visa'
+            ? 'bg-accent text-accent-deep' : 'border border-ink-line text-zinc-400'}`}>
+          BICE Visa
+        </button>
+        <button onClick={() => selectSource('santander_vista')}
+          className={`rounded-lg px-3 py-1.5 text-sm ${source === 'santander_vista'
+            ? 'bg-accent text-accent-deep' : 'border border-ink-line text-zinc-400'}`}>
+          Santander
+        </button>
+      </div>
 
       <label className="text-sm text-zinc-300">
-        Archivo de cartola (.csv)
-        <input type="file" accept=".csv" aria-label="Archivo de cartola"
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (file) onFile(file)
-            e.target.value = ''
-          }}
+        {source === 'bice_visa' ? 'Archivo de cartola (.csv)' : 'Archivo de cartola (.pdf)'}
+        <input type="file" accept={source === 'bice_visa' ? '.csv' : '.pdf'} aria-label="Archivo de cartola"
+          onChange={(e) => { if (e.target.files?.[0]) onFile(e.target.files[0]); e.target.value = '' }}
           className="mt-2 block w-full text-xs" />
       </label>
 
@@ -115,8 +139,10 @@ export function ImportScreen() {
       {rows.length > 0 && (
         <>
           <div className="text-[11px] text-zinc-500">
-            {selected.length} de {rows.length} seleccionados · bajará tu SLRD en{' '}
-            <MoneyText value={slrdDrop} className="text-debt" />
+            {selected.length} de {rows.length} seleccionados ·{' '}
+            {source === 'bice_visa'
+              ? <>bajará tu SLRD en <MoneyText value={slrdDrop} className="text-debt" /></>
+              : <span>solo analítica, no afecta tu SLRD</span>}
           </div>
           <PreviewTable
             rows={rows} categories={categories.data ?? []}
