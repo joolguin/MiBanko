@@ -58,4 +58,42 @@ describe('ImportScreen', () => {
     expect(payload.rows).toHaveLength(1)
     expect(payload.rows[0]).toMatchObject({ amount: 5500, categoryId: 'cat-transporte' })
   })
+
+  it('should_KeepUserUnselect_When_PreviewDataRefetchesWithNewReference', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemoryRouter><ImportScreen /></MemoryRouter>)
+
+    const file = new File(['x'], 'cartola.csv', { type: 'text/csv' })
+    await user.upload(screen.getByLabelText(/archivo/i), file)
+    await screen.findByText('Google Play')
+
+    // Checkboxes: [0] = "Marcar todas", [1] = the Google Play row.
+    const rowCheckbox = screen.getAllByRole('checkbox')[1]
+    await user.click(rowCheckbox)
+    expect(rowCheckbox).not.toBeChecked()
+
+    // Simulate react-query refetch on window focus: same content, new array reference.
+    vi.mocked(useImportPreview).mockReturnValue({ data: [], isLoading: false } as any)
+    rerender(<MemoryRouter><ImportScreen /></MemoryRouter>)
+
+    expect(screen.getAllByRole('checkbox')[1]).not.toBeChecked()
+  })
+
+  it('should_ClearStalePreview_When_SecondFileFailsToParse', async () => {
+    const user = userEvent.setup()
+    renderScreen()
+
+    const goodFile = new File(['x'], 'cartola.csv', { type: 'text/csv' })
+    await user.upload(screen.getByLabelText(/archivo/i), goodFile)
+    await screen.findByText('Google Play')
+    expect(screen.getByRole('button', { name: /importar/i })).toBeInTheDocument()
+
+    vi.mocked(parseBiceVisaCsv).mockRejectedValueOnce(new Error('bad file'))
+    const badFile = new File(['y'], 'otra.csv', { type: 'text/csv' })
+    await user.upload(screen.getByLabelText(/archivo/i), badFile)
+
+    await screen.findByText(/no se pudo leer el archivo/i)
+    expect(screen.queryByText('Google Play')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /importar/i })).not.toBeInTheDocument()
+  })
 })

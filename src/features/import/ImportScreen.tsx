@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAccounts } from '../../data/useAccounts'
 import { useCategories } from '../../data/useCategories'
@@ -38,8 +38,15 @@ export function ImportScreen() {
 
   const preview = useImportPreview(biceAccount?.id, range)
 
+  const builtForRef = useRef<RawMovement[] | null>(null)
+
   useEffect(() => {
-    if (!movements) return
+    if (!movements) {
+      builtForRef.current = null
+      return
+    }
+    if (builtForRef.current === movements) return
+    if (preview.isLoading) return
     const cats = categories.data ?? []
     const dupFlags = flagDuplicates(movements, preview.data ?? [])
     setRows(movements.map((m, i) => ({
@@ -47,10 +54,13 @@ export function ImportScreen() {
       installments: m.installments, isDuplicate: dupFlags[i], selected: !dupFlags[i],
       categoryId: resolveCategoryId(m, cats),
     })))
-  }, [movements, preview.data, categories.data])
+    builtForRef.current = movements
+  }, [movements, preview.data, preview.isLoading, categories.data])
 
   async function onFile(file: File) {
     setParseError(false)
+    setMovements(null)
+    setRows([])
     try {
       setMovements(await parseBiceVisaCsv(file))
     } catch {
@@ -83,7 +93,11 @@ export function ImportScreen() {
       <label className="text-sm text-zinc-300">
         Archivo de cartola (.csv)
         <input type="file" accept=".csv" aria-label="Archivo de cartola"
-          onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) onFile(file)
+            e.target.value = ''
+          }}
           className="mt-2 block w-full text-xs" />
       </label>
 
