@@ -52,6 +52,7 @@ export function useImportTransactions() {
       qc.invalidateQueries({ queryKey: ['slrd'] })
       qc.invalidateQueries({ queryKey: ['month-transactions'] })
       qc.invalidateQueries({ queryKey: ['slrd-history'] })
+      qc.invalidateQueries({ queryKey: ['current-cycle'] })
     },
   })
 }

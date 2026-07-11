@@ -96,4 +96,17 @@ describe('ImportScreen', () => {
     expect(screen.queryByText('Google Play')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /importar/i })).not.toBeInTheDocument()
   })
+
+  it('should_ShowNoMovementsMessage_When_ParserReturnsEmptyArray', async () => {
+    const user = userEvent.setup()
+    vi.mocked(parseBiceVisaCsv).mockResolvedValue([])
+    renderScreen()
+
+    const file = new File(['x'], 'cartola.csv', { type: 'text/csv' })
+    await user.upload(screen.getByLabelText(/archivo/i), file)
+
+    await screen.findByText(/no se reconocieron movimientos/i)
+    expect(screen.queryByText('Google Play')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /importar/i })).not.toBeInTheDocument()
+  })
 })

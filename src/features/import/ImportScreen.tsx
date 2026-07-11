@@ -27,6 +27,7 @@ export function ImportScreen() {
   const [movements, setMovements] = useState<RawMovement[] | null>(null)
   const [rows, setRows] = useState<PreviewRow[]>([])
   const [parseError, setParseError] = useState(false)
+  const [parseEmpty, setParseEmpty] = useState(false)
 
   const biceAccount = accounts.data?.find((a) => a.type === 'credit')
 
@@ -59,10 +60,16 @@ export function ImportScreen() {
 
   async function onFile(file: File) {
     setParseError(false)
+    setParseEmpty(false)
     setMovements(null)
     setRows([])
     try {
-      setMovements(await parseBiceVisaCsv(file))
+      const parsed = await parseBiceVisaCsv(file)
+      if (parsed.length === 0) {
+        setParseEmpty(true)
+        return
+      }
+      setMovements(parsed)
     } catch {
       setParseError(true)
     }
@@ -102,6 +109,8 @@ export function ImportScreen() {
       </label>
 
       {parseError && <p className="text-debt text-sm">No se pudo leer el archivo. Revisá que sea la cartola CSV de la Visa.</p>}
+
+      {parseEmpty && <p className="text-debt text-sm">No se reconocieron movimientos en el archivo. Revisá que sea la cartola CSV de la Visa.</p>}
 
       {rows.length > 0 && (
         <>
