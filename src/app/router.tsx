@@ -17,6 +17,8 @@ const HistorialScreen = lazy(() =>
   import('../features/historial/HistorialScreen').then((m) => ({ default: m.HistorialScreen })))
 const AjustesScreen = lazy(() =>
   import('../features/ajustes/AjustesScreen').then((m) => ({ default: m.AjustesScreen })))
+const ImportScreen = lazy(() =>
+  import('../features/import/ImportScreen').then((m) => ({ default: m.ImportScreen })))
 
 function RouteFallback() {
   return (
@@ -43,4 +45,5 @@ export const router = createBrowserRouter([
   { path: '/ciclo', element: screen(<CicloScreen />) },
   { path: '/historial', element: screen(<HistorialScreen />) },
   { path: '/ajustes', element: screen(<AjustesScreen />) },
+  { path: '/importar', element: screen(<ImportScreen />) },
 ])
