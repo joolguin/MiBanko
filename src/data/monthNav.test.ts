@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { currentMonthKey, shiftMonth, monthLabel, monthRange } from './monthNav'
+import { currentMonthKey, shiftMonth, monthLabel, monthRange, lastCompleteMonths } from './monthNav'
 
 describe('currentMonthKey', () => {
   it('should_ReturnMonthInSantiago_When_GivenUtcInstant', () => {
@@ -37,5 +37,23 @@ describe('monthRange', () => {
 
   it('should_RollOverYear_When_December', () => {
     expect(monthRange('2026-12')).toEqual({ start: '2026-12-01', endExclusive: '2027-01-01' })
+  })
+})
+
+describe('lastCompleteMonths', () => {
+  it('should_ReturnPreviousMonthsAscending_When_GivenCurrent', () => {
+    expect(lastCompleteMonths('2026-07', 3)).toEqual(['2026-04', '2026-05', '2026-06'])
+  })
+
+  it('should_ExcludeCurrentMonth', () => {
+    expect(lastCompleteMonths('2026-07', 3)).not.toContain('2026-07')
+  })
+
+  it('should_CrossYearBoundary', () => {
+    expect(lastCompleteMonths('2026-02', 3)).toEqual(['2025-11', '2025-12', '2026-01'])
+  })
+
+  it('should_ReturnEmpty_When_NIsZero', () => {
+    expect(lastCompleteMonths('2026-07', 0)).toEqual([])
   })
 })

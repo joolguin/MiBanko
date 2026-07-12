@@ -24,6 +24,16 @@ export function shiftMonth(month: MonthKey, delta: -1 | 1): MonthKey {
   return format(year, monthIndex + delta)
 }
 
+export function lastCompleteMonths(current: MonthKey, n: number): MonthKey[] {
+  const months: MonthKey[] = []
+  let month = current
+  for (let i = 0; i < n; i++) {
+    month = shiftMonth(month, -1)
+    months.push(month)
+  }
+  return months.reverse()
+}
+
 export function monthLabel(month: MonthKey): string {
   // Mediodía con offset fijo evita cualquier corrimiento de día al formatear.
   const date = new Date(`${month}-01T12:00:00-04:00`)
