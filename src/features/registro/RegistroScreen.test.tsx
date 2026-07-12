@@ -59,4 +59,35 @@ describe('RegistroScreen', () => {
     renderScreen()
     expect(screen.getByRole('button', { name: /guardar/i })).toBeDisabled()
   })
+
+  async function selectComidaAndType90k() {
+    await userEvent.click(screen.getByText('Categoría'))
+    await userEvent.click(screen.getByRole('button', { name: 'Comida' }))
+    for (const d of ['9', '0', '0', '0', '0']) {
+      await userEvent.click(screen.getByRole('button', { name: d }))
+    }
+  }
+
+  // El <p> del aviso mezcla texto y <span> de MoneyText, así que lo ubicamos por
+  // el <p> cuyo textContent contiene "quedás en".
+  const hintParagraph = (_content: string, el: Element | null) =>
+    el?.tagName.toLowerCase() === 'p' && (el.textContent ?? '').includes('quedás en')
+
+  it('should_ShowBudgetHint_When_ExpenseCrossesThreshold', async () => {
+    vi.mocked(useBudgets).mockReturnValue({ data: [{ id: 'b1', categoryId: 'c1', amount: 100000 }] } as any)
+    renderScreen()
+    await selectComidaAndType90k() // 90.000 de 100.000 = 90% => cruza a warn
+
+    const hint = screen.getByText(hintParagraph)
+    expect(hint.textContent).toMatch(/Comida/)
+    expect(hint.textContent).toMatch(/90%/)
+  })
+
+  it('should_NotShowBudgetHint_When_CategoryHasNoBudget', async () => {
+    // useBudgets es [] por defecto
+    renderScreen()
+    await selectComidaAndType90k()
+
+    expect(screen.queryByText(hintParagraph)).toBeNull()
+  })
 })
