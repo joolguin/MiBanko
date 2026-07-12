@@ -11,6 +11,7 @@ export function mapMonthTxRow(row: Record<string, unknown>): MonthTx {
     transactionDate: String(row.transaction_date),
     amount: Number(row.amount ?? 0),
     type: row.type as TxType,
+    categoryId: row.category_id ? String(row.category_id) : null,
     channel: (row.channel as Channel | null) ?? null,
     categoryName: categories?.name ?? null,
     accountName: accounts.name,
@@ -25,7 +26,7 @@ export function useMonthTransactions(month: MonthKey) {
       const { start, endExclusive } = monthRange(month)
       const { data, error } = await supabase
         .from('transactions')
-        .select('id, transaction_date, amount, type, channel, categories(name), accounts!inner(name, type)')
+        .select('id, transaction_date, amount, type, channel, category_id, categories(name), accounts!inner(name, type)')
         .gte('transaction_date', start)
         .lt('transaction_date', endExclusive)
         .order('transaction_date', { ascending: false })

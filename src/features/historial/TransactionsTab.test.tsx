@@ -10,7 +10,7 @@ vi.mock('../../data/useMonthTransactions')
 function tx(partial: Partial<MonthTx>): MonthTx {
   return {
     id: Math.random().toString(), transactionDate: '2026-07-12', amount: 12000,
-    type: 'gasto', channel: null, categoryName: 'Comida',
+    type: 'gasto', categoryId: null, channel: null, categoryName: 'Comida',
     accountName: 'BICE', accountType: 'credit', ...partial,
   }
 }

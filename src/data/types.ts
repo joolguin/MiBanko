@@ -93,6 +93,7 @@ export interface MonthTx {
   transactionDate: string
   amount: number
   type: TxType
+  categoryId: string | null
   channel: Channel | null
   categoryName: string | null
   accountName: string
