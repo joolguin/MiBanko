@@ -4,10 +4,12 @@ import { BudgetsTab } from './BudgetsTab'
 import { useMonthTransactions } from '../../data/useMonthTransactions'
 import { useBudgets, useSaveBudget, useDeleteBudget } from '../../data/useBudgets'
 import { useCategories } from '../../data/useCategories'
+import { useCategoryAverages } from '../../data/useCategoryAverages'
 
 vi.mock('../../data/useMonthTransactions')
 vi.mock('../../data/useBudgets')
 vi.mock('../../data/useCategories')
+vi.mock('../../data/useCategoryAverages')
 
 function setupDefaults() {
   vi.mocked(useMonthTransactions).mockReturnValue({ isLoading: false, isError: false, data: [] } as any)
@@ -16,6 +18,7 @@ function setupDefaults() {
   // BudgetSheet (siempre montado por BudgetsTab) llama estos hooks incondicionalmente.
   vi.mocked(useSaveBudget).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false } as any)
   vi.mocked(useDeleteBudget).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: false } as any)
+  vi.mocked(useCategoryAverages).mockReturnValue({ rows: [], monthKeys: [], isLoading: false, isError: false })
 }
 
 describe('BudgetsTab', () => {
