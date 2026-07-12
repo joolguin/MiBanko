@@ -132,9 +132,9 @@ export function ImportScreen() {
           className="mt-2 block w-full text-xs" />
       </label>
 
-      {parseError && <p className="text-debt text-sm">No se pudo leer el archivo. Revisá que sea la cartola CSV de la Visa.</p>}
+      {parseError && <p className="text-debt text-sm">No se pudo leer el archivo. Revisá que sea la cartola {source === 'bice_visa' ? 'CSV de la Visa' : 'PDF de Santander'}.</p>}
 
-      {parseEmpty && <p className="text-debt text-sm">No se reconocieron movimientos en el archivo. Revisá que sea la cartola CSV de la Visa.</p>}
+      {parseEmpty && <p className="text-debt text-sm">No se reconocieron movimientos en el archivo. Revisá que sea la cartola {source === 'bice_visa' ? 'CSV de la Visa' : 'PDF de Santander'}.</p>}
 
       {rows.length > 0 && (
         <>

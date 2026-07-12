@@ -93,6 +93,8 @@ export function parseSantanderMovements(lines: PdfLine[]): RawMovement[] {
     const amountItem = line.items.find(
       (it) => it.x >= AMOUNT_X_MIN && it.x <= AMOUNT_X_MAX && AMOUNT.test(it.str),
     )
+    // '93' es el código de sucursal observado en la cartola de muestra; otra cartola con
+    // otro SUC caería en "no reconocidos" (seguro, pero requeriría ampliar este gate).
     const hasSuc = line.items.some((it) => it.str === '93')
     if (!amountItem || !hasSuc || !currentDay) continue
 

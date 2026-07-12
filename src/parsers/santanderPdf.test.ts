@@ -36,7 +36,7 @@ const day2: PdfLine[] = [
 ]
 
 describe('parseSantanderMovements', () => {
-  it('should_ClassifyByColumn_When_ChequeVsAbono', () => {
+  it('should_ClassifyByColumn_When_CargoVsAbono', () => {
     const rows = parseSantanderMovements([...rangeLines, ...day1])
 
     // el abono (x≈462) es ingreso; la compra (x≈395) es gasto

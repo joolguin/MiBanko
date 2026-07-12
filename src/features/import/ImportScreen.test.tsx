@@ -8,6 +8,7 @@ import { useAccounts } from '../../data/useAccounts'
 import { useCategories } from '../../data/useCategories'
 import { useImportPreview } from '../../data/useImportPreview'
 import { useImportTransactions } from '../../data/useImportTransactions'
+import { parseSantanderPdf } from '../../parsers/santanderPdfExtract'
 
 vi.mock('../../parsers/biceVisaCsv')
 vi.mock('../../parsers/santanderPdfExtract', () => ({
@@ -144,5 +145,19 @@ describe('ImportScreen', () => {
     await screen.findByText('Compra Nacional STA. ISABEL AP')
 
     expect(screen.getByText(/no afecta tu slrd/i)).toBeInTheDocument()
+  })
+
+  it('should_MentionPdfDeSantander_When_SantanderParserRejects', async () => {
+    const user = userEvent.setup()
+    vi.mocked(parseSantanderPdf).mockRejectedValueOnce(new Error('bad pdf'))
+    renderScreen()
+
+    await user.click(screen.getByRole('button', { name: /santander/i }))
+    const file = new File(['x'], 'cartola.pdf', { type: 'application/pdf' })
+    await user.upload(screen.getByLabelText(/archivo/i), file)
+
+    await screen.findByText(/no se pudo leer el archivo/i)
+    expect(screen.getByText(/pdf de santander/i)).toBeInTheDocument()
+    expect(screen.queryByText(/csv de la visa/i)).not.toBeInTheDocument()
   })
 })
