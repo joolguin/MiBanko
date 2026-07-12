@@ -108,3 +108,25 @@ export interface CategorySpendSegment {
   // sin depender del texto del label (una categoría real podría llamarse "Otros").
   isOther: boolean
 }
+
+export interface Budget {
+  id: string
+  categoryId: string
+  amount: number
+}
+
+export interface BudgetInput {
+  categoryId: string
+  amount: number
+}
+
+export type BudgetState = 'ok' | 'warn' | 'over'
+
+export interface BudgetStatus {
+  categoryId: string
+  categoryName: string
+  amount: number
+  spent: number
+  pct: number
+  state: BudgetState
+}
