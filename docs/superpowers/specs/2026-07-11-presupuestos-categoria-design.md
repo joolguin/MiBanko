@@ -138,8 +138,10 @@ componente; se decide en el plan.
 ## Aviso al registrar
 
 En `RegistroScreen`, al guardar un `gasto` cuya categoría tiene presupuesto: mensaje
-inline no bloqueante, p. ej. *"Con esto quedas en $X de $Y en Supermercado (105%)"*, o un
-aviso más suave al cruzar 80%. El registro se completa igual; el aviso es informativo.
+inline no bloqueante, p. ej. *"Con esto quedas en $X de $Y en Supermercado (105%)"*. El
+aviso se dispara cuando el gasto **cruza** un umbral (el pct post-registro pasa a `warn` o
+`over` habiendo estado por debajo); si ya venía sobre umbral no re-molesta en cada gasto.
+El registro se completa igual; el aviso es solo informativo.
 
 Requiere que Registro disponga de `useBudgets()` + el gasto del mes en curso de esa
 categoría (via `useMonthTransactions` del mes actual, ya disponible en la app). El cálculo
