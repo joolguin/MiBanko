@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { useAccounts } from '../../data/useAccounts'
 import { useCategories } from '../../data/useCategories'
 import { useRegisterTransaction } from '../../data/useRegisterTransaction'
+import { useBudgets } from '../../data/useBudgets'
+import { useMonthTransactions } from '../../data/useMonthTransactions'
+import { budgetHint } from '../../data/budgetHint'
+import { currentMonthKey } from '../../data/monthNav'
 import { NumberPad } from '../../components/ui/NumberPad'
 import { BottomSheet } from '../../components/ui/BottomSheet'
 import { Chip } from '../../components/ui/Chip'
@@ -22,6 +26,8 @@ export function RegistroScreen() {
   const accounts = useAccounts()
   const categories = useCategories()
   const register = useRegisterTransaction()
+  const budgets = useBudgets()
+  const monthTxs = useMonthTransactions(currentMonthKey(new Date()))
 
   const [amount, setAmount] = useState(0)
   const [accountId, setAccountId] = useState<string | null>(null)
@@ -37,6 +43,7 @@ export function RegistroScreen() {
   }, [accounts.data, accountId])
 
   const category: Category | undefined = categories.data?.find((c) => c.id === categoryId)
+  const hint = budgetHint(categoryId, amount, monthTxs.data ?? [], budgets.data ?? [], category?.name ?? '')
   const type: TxType = 'gasto'
   const canSave = amount > 0 && !!account && !register.isPending
 
@@ -63,6 +70,13 @@ export function RegistroScreen() {
         <Chip label={CHANNELS.find((c) => c.id === channel)!.label} onClick={() => setSheet('channel')} active />
         <Chip label={category?.name ?? 'Categoría'} onClick={() => setSheet('category')} active={!!category} />
       </div>
+
+      {hint && (
+        <p className={`mt-3 text-sm ${hint.state === 'over' ? 'text-debt' : 'text-amber-500'}`}>
+          Con esto quedás en <MoneyText value={hint.projectedSpent} className="inline" /> de{' '}
+          <MoneyText value={hint.amount} className="inline" /> en {hint.categoryName} ({Math.round(hint.pct * 100)}%)
+        </p>
+      )}
 
       <input value={description} onChange={(e) => setDescription(e.target.value)}
         placeholder="Descripción (opcional)"

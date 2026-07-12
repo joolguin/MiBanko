@@ -7,9 +7,13 @@ import { RegistroScreen } from './RegistroScreen'
 vi.mock('../../data/useAccounts')
 vi.mock('../../data/useCategories')
 vi.mock('../../data/useRegisterTransaction')
+vi.mock('../../data/useBudgets')
+vi.mock('../../data/useMonthTransactions')
 import { useAccounts } from '../../data/useAccounts'
 import { useCategories } from '../../data/useCategories'
 import { useRegisterTransaction } from '../../data/useRegisterTransaction'
+import { useBudgets } from '../../data/useBudgets'
+import { useMonthTransactions } from '../../data/useMonthTransactions'
 
 const mutate = vi.fn()
 beforeEach(() => {
@@ -19,6 +23,8 @@ beforeEach(() => {
   ] } as any)
   vi.mocked(useCategories).mockReturnValue({ data: [{ id: 'c1', name: 'Comida' }] } as any)
   vi.mocked(useRegisterTransaction).mockReturnValue({ mutate, isPending: false, isError: false } as any)
+  vi.mocked(useBudgets).mockReturnValue({ data: [] } as any)
+  vi.mocked(useMonthTransactions).mockReturnValue({ data: [] } as any)
   mutate.mockReset()
 })
 
