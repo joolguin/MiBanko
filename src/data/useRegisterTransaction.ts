@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import { slrdDelta } from './slrdDelta'
+import { invalidateTxQueries } from './txInvalidation'
 import type { Slrd, NewTransaction } from './types'
 
 export function applyOptimistic(prev: Slrd, tx: NewTransaction): Slrd {
@@ -43,7 +44,7 @@ export function useRegisterTransaction() {
       if (ctx?.prev) qc.setQueryData(['slrd'], ctx.prev)
     },
     onSettled: () => {
-      qc.invalidateQueries({ queryKey: ['slrd'] })
+      invalidateTxQueries(qc)
     },
   })
 }

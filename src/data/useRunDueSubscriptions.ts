@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { invalidateTxQueries } from './txInvalidation'
 
 const KEY = 'mibanko:subs-run'
 
@@ -25,8 +26,7 @@ export function useRunDueSubscriptions(): void {
     markRan(window.localStorage, now) // marca antes: evita doble disparo (StrictMode)
     supabase.rpc('run_due_subscriptions').then(({ error }) => {
       if (error) return
-      qc.invalidateQueries({ queryKey: ['slrd'] })
-      qc.invalidateQueries({ queryKey: ['current-cycle'] })
+      invalidateTxQueries(qc)
     })
   }, [qc])
 }

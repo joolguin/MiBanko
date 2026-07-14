@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { invalidateTxQueries } from './txInvalidation'
 
 export interface ImportRow {
   date: string
@@ -49,10 +50,7 @@ export function useImportTransactions() {
       if (error) throw new Error(error.message)
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['slrd'] })
-      qc.invalidateQueries({ queryKey: ['month-transactions'] })
-      qc.invalidateQueries({ queryKey: ['slrd-history'] })
-      qc.invalidateQueries({ queryKey: ['current-cycle'] })
+      invalidateTxQueries(qc)
     },
   })
 }
