@@ -2,7 +2,23 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import { slrdDelta } from './slrdDelta'
 import { invalidateTxQueries } from './txInvalidation'
+import { santiagoDateKey } from './santiagoDate'
 import type { Slrd, NewTransaction } from './types'
+
+// La fecha la fija el cliente en zona Santiago. Si se omite, la columna aplica
+// su default (current_date en UTC) y los gastos de noche quedan fechados mañana.
+export function buildTransactionInsert(tx: NewTransaction, today: string) {
+  return {
+    account_id: tx.accountId,
+    type: tx.type,
+    amount: tx.amount,
+    channel: tx.channel,
+    category_id: tx.categoryId,
+    description: tx.description,
+    billing_cycle_id: tx.billingCycleId,
+    transaction_date: today,
+  }
+}
 
 export function applyOptimistic(prev: Slrd, tx: NewTransaction): Slrd {
   const delta = slrdDelta({
@@ -23,15 +39,8 @@ export function useRegisterTransaction() {
   const qc = useQueryClient()
   return useMutation<void, Error, NewTransaction, { prev?: Slrd }>({
     mutationFn: async (tx) => {
-      const { error } = await supabase.from('transactions').insert({
-        account_id: tx.accountId,
-        type: tx.type,
-        amount: tx.amount,
-        channel: tx.channel,
-        category_id: tx.categoryId,
-        description: tx.description,
-        billing_cycle_id: tx.billingCycleId,
-      })
+      const row = buildTransactionInsert(tx, santiagoDateKey(new Date()))
+      const { error } = await supabase.from('transactions').insert(row)
       if (error) throw new Error(error.message)
     },
     onMutate: async (tx) => {

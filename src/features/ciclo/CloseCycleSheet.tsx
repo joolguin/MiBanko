@@ -4,6 +4,7 @@ import { NumberPad } from '../../components/ui/NumberPad'
 import { MoneyText } from '../../components/ui/MoneyText'
 import { useCloseCycle } from '../../data/useCloseCycle'
 import { deriveCycleDates } from '../../data/cycleDates'
+import { santiagoToday } from '../../data/santiagoDate'
 import type { BiceConfig, CloseCycleResult } from '../../data/types'
 
 interface Props {
@@ -22,7 +23,7 @@ export function CloseCycleSheet({ open, config, onClose, onClosed }: Props) {
   }, [open])
 
   function submit() {
-    const dates = deriveCycleDates(config, new Date())
+    const dates = deriveCycleDates(config, santiagoToday(new Date()))
     close.mutate({ billedAmount: billed, dates }, { onSuccess: (r) => { onClosed(r); onClose() } })
   }
 

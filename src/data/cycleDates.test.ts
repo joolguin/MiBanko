@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { deriveCycleDates } from './cycleDates'
+import { santiagoToday } from './santiagoDate'
 
 const config = { closingDay: 25, dueDay: 15 }
 
@@ -24,6 +25,16 @@ describe('deriveCycleDates', () => {
     // corte 5, vence 20 -> vencimiento en el mismo mes del corte.
     expect(deriveCycleDates({ closingDay: 5, dueDay: 20 }, new Date(Date.UTC(2026, 6, 10)))).toEqual({
       cycleStart: '2026-06-06', cycleEnd: '2026-07-05', dueDate: '2026-07-20',
+    })
+  })
+
+  it('should_UseSantiagoDay_When_ClosingAtNightBeforeUtcRollsOver', () => {
+    // Santiago 2026-06-24 23:00 (UTC−4) == 2026-06-25 03:00 UTC.
+    // Localmente aún es el 24 (< closingDay 25): el corte más reciente es el 25-may.
+    // Con new Date() crudo, getUTCDate leería 25 y saltaría al corte del 25-jun (bug).
+    const instant = new Date('2026-06-25T03:00:00Z')
+    expect(deriveCycleDates(config, santiagoToday(instant))).toEqual({
+      cycleStart: '2026-04-26', cycleEnd: '2026-05-25', dueDate: '2026-06-15',
     })
   })
 })
