@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { invalidateTxQueries } from './txInvalidation'
 import type { CloseCycleResult, CycleDates } from './types'
 
 export function useCloseCycle() {
@@ -22,8 +23,9 @@ export function useCloseCycle() {
       }
     },
     onSettled: () => {
-      qc.invalidateQueries({ queryKey: ['slrd'] })
-      qc.invalidateQueries({ queryKey: ['current-cycle'] })
+      // close_cycle asigna billing_cycle_id a los gastos sueltos: es una
+      // mutación sobre transactions, así que invalida el set completo.
+      invalidateTxQueries(qc)
       qc.invalidateQueries({ queryKey: ['unpaid-cycles'] })
     },
   })
