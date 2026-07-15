@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { todayKey, shouldRun, markRan } from './useRunDueSubscriptions'
+import { shouldRun, markRan } from './useRunDueSubscriptions'
+import { santiagoDateKey } from './santiagoDate'
 
 function memStorage(initial: Record<string, string> = {}) {
   const m = { ...initial }
@@ -22,7 +23,7 @@ describe('throttle de run_due_subscriptions', () => {
     expect(shouldRun(s, now)).toBe(false)
   })
   it('should_RunTrue_When_CorrioOtroDia', () => {
-    const s = memStorage({ 'mibanko:subs-run': todayKey(new Date('2026-07-07T12:00:00Z')) })
+    const s = memStorage({ 'mibanko:subs-run': santiagoDateKey(new Date('2026-07-07T12:00:00Z')) })
     expect(shouldRun(s, now)).toBe(true)
   })
 })

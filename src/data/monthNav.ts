@@ -1,11 +1,11 @@
+import { santiagoDateKey } from './santiagoDate'
 import type { MonthKey } from './types'
 
 const SANTIAGO = 'America/Santiago'
 
 export function currentMonthKey(today: Date): MonthKey {
-  // 'en-CA' produce 'AAAA-MM-DD'; nos quedamos con 'AAAA-MM'.
-  const ymd = new Intl.DateTimeFormat('en-CA', { timeZone: SANTIAGO }).format(today)
-  return ymd.slice(0, 7)
+  // santiagoDateKey da 'AAAA-MM-DD'; nos quedamos con 'AAAA-MM'.
+  return santiagoDateKey(today).slice(0, 7)
 }
 
 function parse(month: MonthKey): { year: number; monthIndex: number } {

@@ -1,15 +1,10 @@
+import { santiagoDateKey } from './santiagoDate'
 import type { SlrdHistoryPoint } from './types'
 
 export type ChartRange = '30d' | '90d' | 'all'
 
 const RANGE_DAYS: Record<Exclude<ChartRange, 'all'>, number> = { '30d': 30, '90d': 90 }
 const MS_PER_DAY = 86_400_000
-const SANTIAGO = 'America/Santiago'
-
-// Fecha de calendario ('AAAA-MM-DD') del instante en America/Santiago.
-function santiagoDateKey(instant: Date): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: SANTIAGO }).format(instant)
-}
 
 // Aritmética de calendario en UTC puro: al operar sobre 'AAAA-MM-DD' no hay
 // corrimiento por DST (Chile alterna −03/−04), y como snapshot_date es date,
