@@ -30,9 +30,11 @@ function RouteFallback() {
   )
 }
 
-function screen(node: ReactNode) {
+// chrome: false = pantalla modal, sin nav ni FAB. El router es quien sabe qué
+// rutas son modales; AppShell no hardcodea rutas.
+function screen(node: ReactNode, opts?: { chrome?: boolean }) {
   return (
-    <AppShell>
+    <AppShell chrome={opts?.chrome}>
       <Suspense fallback={<RouteFallback />}>{node}</Suspense>
     </AppShell>
   )
@@ -40,7 +42,7 @@ function screen(node: ReactNode) {
 
 export const router = createBrowserRouter([
   { path: '/', element: screen(<DashboardScreen />) },
-  { path: '/registro', element: screen(<RegistroScreen />) },
+  { path: '/registro', element: screen(<RegistroScreen />, { chrome: false }) },
   { path: '/snapshots', element: screen(<SnapshotsScreen />) },
   { path: '/ciclo', element: screen(<CicloScreen />) },
   { path: '/historial', element: screen(<HistorialScreen />) },

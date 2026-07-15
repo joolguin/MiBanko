@@ -34,4 +34,21 @@ describe('AppShell', () => {
     expect(screen.getByRole('link', { name: 'Ciclo' }).firstChild).toHaveClass('text-accent-bright')
     expect(screen.getByRole('link', { name: 'Inicio' }).firstChild).not.toHaveClass('text-accent-bright')
   })
+
+  it('should_HideNav_When_ChromeIsFalse', () => {
+    render(
+      <MemoryRouter initialEntries={['/registro']}>
+        <AppShell chrome={false}><p>contenido</p></AppShell>
+      </MemoryRouter>,
+    )
+
+    expect(screen.queryByRole('navigation')).toBeNull()
+    expect(screen.getByText('contenido')).toBeInTheDocument()
+  })
+
+  it('should_ShowNav_When_ChromeIsOmitted', () => {
+    renderShell('/')
+
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+  })
 })

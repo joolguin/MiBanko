@@ -4,6 +4,13 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { RegistroScreen } from './RegistroScreen'
 
+// vi.hoisted porque vi.mock se iza por encima de las declaraciones del módulo.
+const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }))
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-router-dom')>()),
+  useNavigate: () => navigate,
+}))
+
 vi.mock('../../data/useAccounts')
 vi.mock('../../data/useCategories')
 vi.mock('../../data/useRegisterTransaction')
@@ -26,6 +33,7 @@ beforeEach(() => {
   vi.mocked(useBudgets).mockReturnValue({ data: [] } as any)
   vi.mocked(useMonthTransactions).mockReturnValue({ data: [] } as any)
   mutate.mockReset()
+  navigate.mockReset()
 })
 
 function renderScreen() {
@@ -33,10 +41,29 @@ function renderScreen() {
 }
 
 describe('RegistroScreen', () => {
+  // getByText('Gasto') es exacto a propósito: /gasto/i matchearía también el
+  // header "registrar gasto" y fallaría por ambigüedad.
   it('should_DefaultToBiceGastoWallet_When_Opened', () => {
     renderScreen()
     expect(screen.getByText('BICE Visa Gold')).toBeInTheDocument()
-    expect(screen.getByText(/gasto/i)).toBeInTheDocument()
+    expect(screen.getByText('Gasto')).toBeInTheDocument()
+    expect(screen.getByText('Wallet Pixel')).toBeInTheDocument()
+  })
+
+  it('should_GoBack_When_CancelPressed', async () => {
+    renderScreen()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
+
+    expect(navigate).toHaveBeenCalledWith(-1)
+  })
+
+  // "Gasto" era un <button> con onClick: se escalaba al tocarlo y no hacía nada.
+  it('should_NotRenderGastoAsButton', () => {
+    renderScreen()
+
+    expect(screen.queryByRole('button', { name: 'Gasto' })).toBeNull()
+    expect(screen.getByText('Gasto')).toBeInTheDocument()
   })
 
   it('should_SubmitWithDefaults_When_AmountEnteredAndSaved', async () => {
