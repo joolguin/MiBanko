@@ -71,7 +71,12 @@ superior del nav, que mide 75px: entra completa.
 
 El FAB (`/registro`) ya mide 56×56 y no se toca.
 
-El caso `disabled` de `NavItem` no recibe área de tap: no es interactivo.
+### Código muerto que se retira
+
+`NavItem` acepta hoy una prop `disabled` y contempla el caso sin `to`, pero
+ninguno de los cuatro call sites (`AppShell.tsx:25-32`) pasa `disabled` ni omite
+`to`. Esa rama nunca se ejecuta. Como el refactor toca justo ese componente, se
+elimina: `to` pasa a ser requerido y `NavItem` siempre devuelve un `<Link>`.
 
 ### Foco visible global
 
@@ -102,7 +107,11 @@ cubren lo que jsdom sí puede afirmar:
 
 - los cinco destinos renderizan como link con su nombre accesible
 - el ítem activo se marca según `pathname`
-- un `NavItem` disabled no renderiza un link
+- `AppShell` renderiza sus children
+
+Estos tests pasan en verde apenas se escriben: describen comportamiento que ya
+funciona. No son TDD, son tests de caracterización que actúan como red de
+seguridad para el refactor de `NavItem`.
 
 **Verificación en navegador** — cubre lo que jsdom no puede:
 
