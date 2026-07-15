@@ -17,7 +17,9 @@ export function useCategoryAverages(): {
   const { endExclusive } = monthRange(monthKeys[monthKeys.length - 1])
 
   const query = useQuery({
-    queryKey: ['category-averages'],
+    // El rango (start, endExclusive) depende de 'hoy': incluirlo en la key evita
+    // servir cache del rango viejo al cruzar un borde de mes con la app abierta.
+    queryKey: ['category-averages', start, endExclusive],
     queryFn: async (): Promise<MonthTx[]> => {
       const { data, error } = await supabase
         .from('transactions')
