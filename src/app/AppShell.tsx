@@ -2,18 +2,24 @@ import { type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { House, CalendarBlank, ChartLine, GearSix, Plus } from '@phosphor-icons/react'
 
-function NavItem({ icon, label, active, disabled, to }: {
-  icon: ReactNode; label: string; active?: boolean; disabled?: boolean; to?: string
+// El ::after es un área de tap de 44x44 (WCAG 2.5.5). Va absoluto y centrado a
+// propósito: así no participa del layout y los íconos no se mueven ni un pixel.
+// Los centros de los ítems están a 55px o más entre sí, así que no se solapan.
+function NavItem({ icon, label, active, to }: {
+  icon: ReactNode; label: string; active?: boolean; to: string
 }) {
-  const content = (
-    <div className={`flex flex-col items-center gap-0.5 text-[10px] ${
-      active ? 'text-accent-bright' : disabled ? 'text-zinc-700' : 'text-zinc-400'
-    }`}>
-      {icon}<span>{label}</span>
-    </div>
+  return (
+    <Link
+      to={to}
+      className="relative after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:h-11 after:w-11 after:content-['']"
+    >
+      <div className={`flex flex-col items-center gap-0.5 text-[10px] ${
+        active ? 'text-accent-bright' : 'text-zinc-400'
+      }`}>
+        {icon}<span>{label}</span>
+      </div>
+    </Link>
   )
-  if (disabled || !to) return content
-  return <Link to={to}>{content}</Link>
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
