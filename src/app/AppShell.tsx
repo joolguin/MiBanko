@@ -22,21 +22,26 @@ function NavItem({ icon, label, active, to }: {
   )
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+// chrome=false es para pantallas modales (/registro): sin nav ni FAB, y sin el
+// pb-24 que les hace de colchón. Ese padding sumado al min-h-[100dvh] de la
+// pantalla es lo que hacía desbordar el viewport en 96px.
+export function AppShell({ children, chrome = true }: { children: ReactNode; chrome?: boolean }) {
   const { pathname } = useLocation()
   return (
     <div className="min-h-[100dvh] flex flex-col font-sans">
-      <div className="flex-1 pb-24">{children}</div>
-      <nav className="fixed bottom-0 inset-x-0 border-t border-ink-line bg-ink-1 flex items-center justify-around px-5 pt-3 pb-6">
-        <NavItem to="/" active={pathname === '/'} label="Inicio" icon={<House size={22} />} />
-        <NavItem to="/ciclo" active={pathname === '/ciclo'} label="Ciclo" icon={<CalendarBlank size={22} />} />
-        <Link to="/registro" aria-label="Registrar"
-          className="w-14 h-14 -mt-8 rounded-full bg-accent flex items-center justify-center border-4 border-ink active:scale-[0.97] transition-transform">
-          <Plus size={26} weight="bold" className="text-accent-deep" />
-        </Link>
-        <NavItem to="/historial" active={pathname === '/historial'} label="Historial" icon={<ChartLine size={22} />} />
-        <NavItem to="/ajustes" active={pathname === '/ajustes'} label="Ajustes" icon={<GearSix size={22} />} />
-      </nav>
+      <div className={chrome ? 'flex-1 pb-24' : 'flex-1'}>{children}</div>
+      {chrome && (
+        <nav className="fixed bottom-0 inset-x-0 border-t border-ink-line bg-ink-1 flex items-center justify-around px-5 pt-3 pb-6">
+          <NavItem to="/" active={pathname === '/'} label="Inicio" icon={<House size={22} />} />
+          <NavItem to="/ciclo" active={pathname === '/ciclo'} label="Ciclo" icon={<CalendarBlank size={22} />} />
+          <Link to="/registro" aria-label="Registrar"
+            className="w-14 h-14 -mt-8 rounded-full bg-accent flex items-center justify-center border-4 border-ink active:scale-[0.97] transition-transform">
+            <Plus size={26} weight="bold" className="text-accent-deep" />
+          </Link>
+          <NavItem to="/historial" active={pathname === '/historial'} label="Historial" icon={<ChartLine size={22} />} />
+          <NavItem to="/ajustes" active={pathname === '/ajustes'} label="Ajustes" icon={<GearSix size={22} />} />
+        </nav>
+      )}
     </div>
   )
 }
