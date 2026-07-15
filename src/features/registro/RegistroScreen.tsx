@@ -7,9 +7,10 @@ import { useBudgets } from '../../data/useBudgets'
 import { useMonthTransactions } from '../../data/useMonthTransactions'
 import { budgetHint } from '../../data/budgetHint'
 import { currentMonthKey } from '../../data/monthNav'
+import { X } from '@phosphor-icons/react'
 import { NumberPad } from '../../components/ui/NumberPad'
 import { BottomSheet } from '../../components/ui/BottomSheet'
-import { Chip } from '../../components/ui/Chip'
+import { Picker } from '../../components/ui/Picker'
 import { MoneyText } from '../../components/ui/MoneyText'
 import type { Account, Category, Channel, TxType } from '../../data/types'
 
@@ -60,15 +61,23 @@ export function RegistroScreen() {
   }
 
   return (
-    <section className="px-6 pt-8 flex flex-col min-h-[100dvh]">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">monto</p>
+    // pb-6 = los mismos 24px que usa el <nav>: sin el pb-24 del shell, Guardar
+    // quedaba pegado al borde inferior, donde vive la barra de gestos.
+    <section className="px-6 pt-8 pb-6 flex flex-col min-h-[100dvh]">
+      <header className="flex items-center justify-between">
+        <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">registrar gasto</p>
+        <button type="button" onClick={() => nav(-1)} aria-label="Cancelar"
+          className="-mr-3 p-3 text-zinc-400 active:scale-[0.9] transition-transform">
+          <X size={20} />
+        </button>
+      </header>
       <MoneyText value={amount} className="text-[52px] leading-none text-zinc-50 mt-1" />
 
-      <div className="flex flex-wrap gap-2 mt-6">
-        <Chip label={account?.name ?? 'Cuenta'} onClick={() => setSheet('account')} active />
-        <Chip label="Gasto" active />
-        <Chip label={CHANNELS.find((c) => c.id === channel)!.label} onClick={() => setSheet('channel')} active />
-        <Chip label={category?.name ?? 'Categoría'} onClick={() => setSheet('category')} active={!!category} />
+      <div className="flex flex-wrap items-center gap-2 mt-6">
+        <Picker label={account?.name ?? 'Cuenta'} onClick={() => setSheet('account')} />
+        <span className="text-sm text-zinc-400 px-1">Gasto</span>
+        <Picker label={CHANNELS.find((c) => c.id === channel)!.label} onClick={() => setSheet('channel')} />
+        <Picker label={category?.name ?? 'Categoría'} onClick={() => setSheet('category')} falta={!category} />
       </div>
 
       {hint && (
