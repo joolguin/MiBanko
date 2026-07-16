@@ -63,6 +63,18 @@ describe('TransactionsTab', () => {
     expect(amount.className).not.toContain('text-accent-bright')
   })
 
+  it('should_ShowShortDate_When_RenderingRow', () => {
+    vi.mocked(useMonthTransactions).mockReturnValue({
+      isLoading: false, isError: false,
+      data: [tx({ transactionDate: '2026-07-12', accountName: 'BICE' })],
+    } as any)
+
+    render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
+
+    expect(screen.getByText('12 jul · BICE')).toBeInTheDocument()
+    expect(screen.queryByText(/2026-07-12/)).not.toBeInTheDocument()
+  })
+
   // Nota: los nombres de categoría aparecen dos veces (fila de la lista y <option>
   // del filtro), así que las aserciones se acotan a la lista con data-testid.
   it('should_ListAllTx_When_NoFilterSelected', () => {

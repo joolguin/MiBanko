@@ -32,4 +32,15 @@ describe('UnpaidCyclesSection', () => {
     expect(screen.getByText('$300.000')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /marcar pagada/i })).toBeInTheDocument()
   })
+
+  it('should_ShowShortDueDate_When_Present', () => {
+    const qc = new QueryClient()
+    render(
+      <QueryClientProvider client={qc}>
+        <UnpaidCyclesSection />
+      </QueryClientProvider>,
+    )
+    expect(screen.getByText('vence 15 jul')).toBeInTheDocument()
+    expect(screen.queryByText(/2026-07-15/)).not.toBeInTheDocument()
+  })
 })

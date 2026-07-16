@@ -4,6 +4,7 @@ import { useAccounts } from '../../data/useAccounts'
 import { useLatestSnapshotsByAccount } from '../../data/useSaveSnapshot'
 import { MoneyText } from '../../components/ui/MoneyText'
 import { PayCycleSheet } from './PayCycleSheet'
+import { formatShortDate } from '../../lib/format'
 import type { BillingCycle } from '../../data/types'
 
 export function UnpaidCyclesSection() {
@@ -26,7 +27,7 @@ export function UnpaidCyclesSection() {
         <div key={c.id} className="py-3.5 border-t border-ink-line flex items-center justify-between">
           <div className="flex flex-col gap-0.5">
             <MoneyText value={c.billedAmount} className="text-[15px] text-zinc-100" />
-            <span className="text-[11px] text-muted">vence {c.dueDate}</span>
+            <span className="text-[11px] text-muted">vence {formatShortDate(c.dueDate)}</span>
           </div>
           <button onClick={() => setPaying(c)}
             className="border border-ink-line rounded-lg px-3 py-1.5 text-sm active:scale-[0.98]">Marcar pagada</button>
@@ -38,7 +39,7 @@ export function UnpaidCyclesSection() {
           <summary className="text-[11px] uppercase tracking-[0.12em] text-faint cursor-pointer">pagados</summary>
           {(paid.data ?? []).map((c) => (
             <div key={c.id} className="py-3 border-t border-ink-line flex items-center justify-between">
-              <span className="text-[11px] text-faint">vencía {c.dueDate}</span>
+              <span className="text-[11px] text-faint">vencía {formatShortDate(c.dueDate)}</span>
               <MoneyText value={c.billedAmount} className="text-sm text-muted" />
             </div>
           ))}
