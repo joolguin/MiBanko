@@ -15,7 +15,7 @@ export function FreshnessSection() {
 
   return (
     <section>
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">frescura</p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-faint">frescura</p>
       <label className="flex items-center justify-between text-sm text-zinc-400 mt-3">
         Avisarme si el snapshot supera (días)
         <input inputMode="numeric" value={days} onChange={(e) => setDays(e.target.value)}

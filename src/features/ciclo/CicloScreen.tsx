@@ -18,13 +18,13 @@ export function CicloScreen() {
 
   return (
     <section className="px-6 pt-8">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">ciclo actual — sin facturar</p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-faint">ciclo actual — sin facturar</p>
 
       {current.isLoading ? (
         <Skeleton className="h-8 w-40 mt-2" />
       ) : (
         <div className="flex items-baseline justify-between mt-1">
-          <span className="text-sm text-zinc-500">{current.data?.items.length ?? 0} gastos</span>
+          <span className="text-sm text-muted">{current.data?.items.length ?? 0} gastos</span>
           <MoneyText value={current.data?.total ?? 0} className="text-2xl text-zinc-50" />
         </div>
       )}
@@ -34,13 +34,13 @@ export function CicloScreen() {
           <div key={t.id} className="py-3 border-t border-ink-line flex justify-between items-center">
             <div className="flex flex-col gap-0.5">
               <span className="text-sm text-zinc-200">{t.description ?? t.categoryName ?? 'Gasto'}</span>
-              <span className="text-[11px] text-zinc-500">{t.categoryName ?? 'Sin categoría'}</span>
+              <span className="text-[11px] text-muted">{t.categoryName ?? 'Sin categoría'}</span>
             </div>
             <MoneyText value={t.amount} className="text-sm text-zinc-300" />
           </div>
         ))}
         {current.data && current.data.items.length === 0 && (
-          <p className="text-sm text-zinc-500 mt-2">Nada por facturar aún.</p>
+          <p className="text-sm text-muted mt-2">Nada por facturar aún.</p>
         )}
       </div>
 
@@ -53,7 +53,7 @@ export function CicloScreen() {
       )}
 
       {!hasConfig && !config.isLoading && (
-        <p className="text-sm text-zinc-500 mt-4">Configurá las fechas de BICE para poder cerrar el ciclo.</p>
+        <p className="text-sm text-muted mt-4">Configurá las fechas de BICE para poder cerrar el ciclo.</p>
       )}
 
       <div className="flex gap-2 mt-5">

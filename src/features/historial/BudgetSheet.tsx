@@ -48,7 +48,7 @@ export function BudgetSheet({ open, categoryId, categoryName, initialAmount, onC
     <BottomSheet open={open} title={`Presupuesto de ${categoryName}`} onClose={onClose}>
       <div className="flex flex-col gap-4">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.12em] text-zinc-600 mb-1">monto mensual</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-faint mb-1">monto mensual</p>
           <MoneyText value={amount} className="text-3xl text-zinc-50" />
         </div>
 
@@ -69,7 +69,7 @@ export function BudgetSheet({ open, categoryId, categoryName, initialAmount, onC
               <span className="text-sm text-zinc-400">Promedio: </span>
               <MoneyText value={suggestion.avg} className="text-sm text-zinc-100" />
               {suggestion.monthsCounted < windowMonths && (
-                <span className="text-[11px] text-zinc-500 ml-2">
+                <span className="text-[11px] text-muted ml-2">
                   promedio de {suggestion.monthsCounted} {suggestion.monthsCounted === 1 ? 'mes' : 'meses'}
                 </span>
               )}

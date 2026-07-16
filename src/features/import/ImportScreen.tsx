@@ -110,7 +110,7 @@ export function ImportScreen() {
 
   return (
     <section className="px-6 pt-8 flex flex-col gap-4">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">importar movimientos</p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-faint">importar movimientos</p>
 
       <div className="flex gap-2">
         <button onClick={() => selectSource('bice_visa')}
@@ -138,7 +138,7 @@ export function ImportScreen() {
 
       {rows.length > 0 && (
         <>
-          <div className="text-[11px] text-zinc-500">
+          <div className="text-[11px] text-muted">
             {selected.length} de {rows.length} seleccionados ·{' '}
             {source === 'bice_visa'
               ? <>bajará tu SLRD en <MoneyText value={slrdDrop} className="text-debt" /></>

@@ -25,7 +25,7 @@ export function PreviewTable({ rows, categories, onChange, onToggleAll, onBulkCa
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between text-[11px] text-zinc-500">
+      <div className="flex items-center justify-between text-[11px] text-muted">
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={allSelected} onChange={(e) => onToggleAll(e.target.checked)} />
           Marcar todas
@@ -42,7 +42,7 @@ export function PreviewTable({ rows, categories, onChange, onToggleAll, onBulkCa
           <input type="checkbox" checked={r.selected} onChange={(e) => onChange(i, { selected: e.target.checked })} />
           <div className="flex-1 min-w-0">
             <p className="text-sm text-zinc-200 truncate">{r.description}</p>
-            <p className="text-[11px] text-zinc-500">
+            <p className="text-[11px] text-muted">
               {r.date}
               {r.installments && <span className="ml-2 text-[var(--fresh-warn)]">en cuotas ({r.installments})</span>}
               {r.isDuplicate && <span className="ml-2 text-debt">posible duplicado</span>}

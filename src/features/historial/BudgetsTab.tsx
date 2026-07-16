@@ -44,7 +44,7 @@ export function BudgetsTab(
       {!loading && !error && (
         <>
           {statuses.length === 0 && (
-            <p className="text-sm text-zinc-500 mt-6">Sin presupuestos. Agregá el primero abajo.</p>
+            <p className="text-sm text-muted mt-6">Sin presupuestos. Agregá el primero abajo.</p>
           )}
 
           <ul className="mt-4">
@@ -56,9 +56,9 @@ export function BudgetsTab(
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-zinc-200 flex-1">{s.categoryName}</span>
                     <span className="text-sm text-zinc-400">
-                      <MoneyText value={s.spent} className="text-zinc-300" /> / <MoneyText value={s.amount} className="text-zinc-500" />
+                      <MoneyText value={s.spent} className="text-zinc-300" /> / <MoneyText value={s.amount} className="text-muted" />
                     </span>
-                    <span className="text-[11px] text-zinc-500 w-10 text-right">{Math.round(s.pct * 100)}%</span>
+                    <span className="text-[11px] text-muted w-10 text-right">{Math.round(s.pct * 100)}%</span>
                   </div>
                   <div className="mt-2 h-1.5 rounded-full bg-ink-2 overflow-hidden">
                     <div className={`h-full ${BAR_COLOR[s.state]}`}
@@ -71,7 +71,7 @@ export function BudgetsTab(
 
           {unbudgeted.length > 0 && (
             <div className="mt-6">
-              <p className="text-[11px] uppercase tracking-[0.12em] text-zinc-600 mb-2">agregar presupuesto</p>
+              <p className="text-[11px] uppercase tracking-[0.12em] text-faint mb-2">agregar presupuesto</p>
               <div className="flex flex-wrap gap-2">
                 {unbudgeted.map((c) => (
                   <button key={c.id}

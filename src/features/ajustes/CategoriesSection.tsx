@@ -14,7 +14,7 @@ export function CategoriesSection() {
   return (
     <section>
       <div className="flex items-center justify-between">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">categorías</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-faint">categorías</p>
         <button onClick={() => setEditing('new')} aria-label="Agregar categoría"
           className="flex items-center gap-1 text-sm text-accent-bright active:scale-[0.98]">
           <Plus size={16} weight="bold" /> Agregar
@@ -34,7 +34,7 @@ export function CategoriesSection() {
       {del.isError && <p className="text-debt text-sm mt-3">No se pudo borrar. Reintentá.</p>}
 
       {cats.data && cats.data.length === 0 && (
-        <p className="text-sm text-zinc-500 mt-3">No tenés categorías. Agregá la primera.</p>
+        <p className="text-sm text-muted mt-3">No tenés categorías. Agregá la primera.</p>
       )}
 
       <div className="mt-2">
@@ -51,7 +51,7 @@ export function CategoriesSection() {
               </div>
             ) : (
               <button onClick={() => setConfirmingId(c.id)} aria-label={`Borrar ${c.name}`}
-                className="text-zinc-500 active:scale-[0.9]">
+                className="text-muted active:scale-[0.9]">
                 <Trash size={16} />
               </button>
             )}

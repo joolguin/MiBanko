@@ -91,7 +91,7 @@ export function TransactionsTab(
           </div>
 
           {visible.length === 0 ? (
-            <p className="text-sm text-zinc-500 mt-6">Sin movimientos con estos filtros.</p>
+            <p className="text-sm text-muted mt-6">Sin movimientos con estos filtros.</p>
           ) : (
             <div className="mt-3" data-testid="tx-list">
               {visible.map((t) => (
@@ -99,7 +99,7 @@ export function TransactionsTab(
                   className="py-3 border-t border-ink-line flex justify-between items-center">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-sm text-zinc-200">{t.categoryName ?? TYPE_LABELS[t.type]}</span>
-                    <span className="text-[11px] text-zinc-500">{t.transactionDate} · {t.accountName}</span>
+                    <span className="text-[11px] text-muted">{t.transactionDate} · {t.accountName}</span>
                   </div>
                   <MoneyText value={displayAmount(t)} signed withPlus
                     className={`text-sm ${t.type === 'ingreso' ? 'text-accent-bright' : 'text-zinc-300'}`} />

@@ -20,7 +20,7 @@ export function HistorialScreen() {
 
   return (
     <section className="px-6 pt-8">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">historial</p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-faint">historial</p>
 
       <div className="flex gap-2 mt-3">
         {TABS.map((t) => (

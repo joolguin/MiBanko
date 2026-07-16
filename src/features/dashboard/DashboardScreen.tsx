@@ -48,7 +48,7 @@ export function DashboardScreen() {
         {age.data != null && (
           <span className={`text-[11px] px-2.5 py-1 ${stale
             ? 'text-[var(--fresh-warn)] border border-ink-line rounded-full'
-            : 'text-zinc-500'}`}>
+            : 'text-muted'}`}>
             {stale ? `snapshot hace ${age.data} días` : `hace ${age.data} días`}
           </span>
         )}
@@ -65,28 +65,28 @@ export function DashboardScreen() {
       {sinDatos ? (
         <div className="mt-16 text-center">
           <p className="text-lg mb-1">Todavía no hay saldos.</p>
-          <p className="text-sm text-zinc-500">Cargá tu primer snapshot para ver el SLRD real.</p>
+          <p className="text-sm text-muted">Cargá tu primer snapshot para ver el SLRD real.</p>
         </div>
       ) : (
         <>
           <div className="mt-8">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">disponible de verdad</p>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-faint">disponible de verdad</p>
             <CountUp value={d.slrdInmediato}
-              className={`block text-[46px] leading-none mt-1.5 ${stale ? 'text-zinc-500' : 'text-accent-bright'}`} />
+              className={`block text-[46px] leading-none mt-1.5 ${stale ? 'text-muted' : 'text-accent-bright'}`} />
             {stale && <p className="text-[11px] text-[var(--fresh-warn)] mt-1">estimado · snapshot viejo</p>}
             <div className="flex items-baseline gap-2 mt-2.5">
-              <MoneyText value={d.saldoContable} className="text-base text-zinc-600 line-through decoration-debt" />
-              <span className="text-xs text-zinc-600">lo que el banco te muestra</span>
+              <MoneyText value={d.saldoContable} className="text-base text-faint line-through decoration-debt" />
+              <span className="text-xs text-faint">lo que el banco te muestra</span>
             </div>
           </div>
 
           <div className="mt-6 py-3.5 border-t border-ink-line flex items-baseline justify-between">
-            <span className="text-sm text-zinc-400">Con Fintual <span className="text-zinc-600">(total)</span></span>
+            <span className="text-sm text-zinc-400">Con Fintual <span className="text-faint">(total)</span></span>
             <MoneyText value={d.slrdTotal} className="text-[17px] text-zinc-200" />
           </div>
 
           <div className="mt-4">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-zinc-600 mb-1">deuda comprometida</p>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-faint mb-1">deuda comprometida</p>
             <Row label="Facturado BICE" hint="pendiente de pago" amount={d.deudaFacturada} />
             <Row label="Ciclo actual" hint="sin facturar" amount={d.deudaNoFacturada} />
           </div>
@@ -101,7 +101,7 @@ function Row({ label, hint, amount }: { label: string; hint: string; amount: num
     <div className="py-3.5 border-t border-ink-line flex items-center justify-between">
       <div className="flex flex-col gap-0.5">
         <span className="text-sm text-zinc-200">{label}</span>
-        <span className="text-[11px] text-zinc-500 flex items-center gap-1">
+        <span className="text-[11px] text-muted flex items-center gap-1">
           <WarningCircle size={12} className="text-[var(--fresh-warn)]" />{hint}
         </span>
       </div>

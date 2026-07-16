@@ -29,7 +29,7 @@ export function CategorySpendTab(
       )}
 
       {!txs.isLoading && !txs.isError && segments.length === 0 && (
-        <p className="text-sm text-zinc-500 mt-6">Sin gastos este mes.</p>
+        <p className="text-sm text-muted mt-6">Sin gastos este mes.</p>
       )}
 
       {!txs.isLoading && !txs.isError && segments.length > 0 && (
@@ -42,7 +42,7 @@ export function CategorySpendTab(
                   style={{ backgroundColor: segmentColor(s.isOther, i) }} />
                 <span className="text-sm text-zinc-200 flex-1">{s.label}</span>
                 <MoneyText value={s.amount} className="text-sm text-zinc-300" />
-                <span className="text-[11px] text-zinc-500 w-10 text-right">{Math.round(s.pct)}%</span>
+                <span className="text-[11px] text-muted w-10 text-right">{Math.round(s.pct)}%</span>
               </li>
             ))}
           </ul>
