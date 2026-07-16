@@ -29,7 +29,7 @@ export function AppShell({ children, chrome = true }: { children: ReactNode; chr
   const { pathname } = useLocation()
   return (
     <div className="min-h-[100dvh] flex flex-col font-sans">
-      <div className={chrome ? 'flex-1 pb-24' : 'flex-1'}>{children}</div>
+      <div className={chrome ? 'flex-1 pb-28' : 'flex-1'}>{children}</div>
       {chrome && (
         <nav className="fixed bottom-0 inset-x-0 border-t border-ink-line bg-ink-1 flex items-center justify-around px-5 pt-3 pb-6">
           <NavItem to="/" active={pathname === '/'} label="Inicio" icon={<House size={22} />} />
