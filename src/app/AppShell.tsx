@@ -23,8 +23,8 @@ function NavItem({ icon, label, active, to }: {
 }
 
 // chrome=false es para pantallas modales (/registro): sin nav ni FAB, y sin el
-// pb-24 que les hace de colchón. Ese padding sumado al min-h-[100dvh] de la
-// pantalla es lo que hacía desbordar el viewport en 96px.
+// pb-28 que les hace de colchón. Ese padding sumado al min-h-[100dvh] de la
+// pantalla es lo que hacía desbordar el viewport en 112px.
 export function AppShell({ children, chrome = true }: { children: ReactNode; chrome?: boolean }) {
   const { pathname } = useLocation()
   return (

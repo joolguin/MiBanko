@@ -27,6 +27,7 @@ export function EdgeFadeScroller({ children, className }: { children: ReactNode;
     if (typeof ResizeObserver !== 'undefined') {
       ro = new ResizeObserver(measure)
       ro.observe(el)
+      if (el.firstElementChild) ro.observe(el.firstElementChild)
     }
     return () => {
       el.removeEventListener('scroll', measure)
