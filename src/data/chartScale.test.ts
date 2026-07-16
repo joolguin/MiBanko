@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { filterByRange, buildChart } from './chartScale'
+import { filterByRange, buildChart, niceDomain } from './chartScale'
 import type { SlrdHistoryPoint } from './types'
 
 function point(date: string, slrd: number, contable: number): SlrdHistoryPoint {
@@ -35,6 +35,46 @@ describe('filterByRange', () => {
     const boundary = filterByRange([point('2026-06-09', 1, 1)], '30d', today)
 
     expect(boundary).toHaveLength(1)
+  })
+})
+
+describe('niceDomain', () => {
+  it('should_RoundToNiceBounds_When_GivenTheRealRange', () => {
+    // Datos reales: el SLRD fue de 115.000 a 103.780 entre el 9 y el 14 de julio.
+    expect(niceDomain(103780, 115000)).toEqual({
+      min: 100000, max: 120000, step: 10000, ticks: [100000, 110000, 120000],
+    })
+  })
+
+  it('should_ContainTheData_When_Rounded', () => {
+    const d = niceDomain(103780, 115000)
+
+    expect(d.min).toBeLessThanOrEqual(103780)
+    expect(d.max).toBeGreaterThanOrEqual(115000)
+  })
+
+  // El rango 0 hace Math.log10(0) === -Infinity y rompe todo el cálculo. No es
+  // teórico: el saldo contable es plano hoy y el SLRD puede serlo cualquier semana.
+  it('should_ExpandRange_When_SeriesIsFlat', () => {
+    const d = niceDomain(103780, 103780)
+
+    expect(Number.isFinite(d.step)).toBe(true)
+    expect(d.max).toBeGreaterThan(d.min)
+    expect(d.min).toBeLessThanOrEqual(103780)
+    expect(d.max).toBeGreaterThanOrEqual(103780)
+  })
+
+  it('should_SurviveAllZeroes_When_SeriesIsFlatAtZero', () => {
+    const d = niceDomain(0, 0)
+
+    expect(Number.isFinite(d.step)).toBe(true)
+    expect(d.max).toBeGreaterThan(d.min)
+  })
+
+  it('should_ShrinkStep_When_RangeIsSmall', () => {
+    const d = niceDomain(1000, 1050)
+
+    expect(d.step).toBeLessThan(100)
   })
 })
 

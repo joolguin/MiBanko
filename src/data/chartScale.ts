@@ -41,6 +41,38 @@ export interface Series {
 
 const SERIES_KEYS: Series['key'][] = ['slrdInmediato', 'saldoContable']
 
+export interface NiceDomain { min: number; max: number; step: number; ticks: number[] }
+
+// Redondea el dominio a topes y pasos leíbles (100.000 / 110.000 / 120.000) en vez
+// de usar los extremos crudos, que dejan la línea apoyada sobre el borde del plot.
+export function niceDomain(min: number, max: number, tickCount = 3): NiceDomain {
+  let lo = min
+  let hi = max
+  // Serie plana: el rango es 0 y Math.log10(0) da -Infinity. Se expande alrededor
+  // del valor antes de redondear.
+  if (hi === lo) {
+    const pad = Math.abs(lo) * 0.1 || 1
+    lo -= pad / 2
+    hi += pad / 2
+  }
+  const rawStep = (hi - lo) / Math.max(tickCount - 1, 1)
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)))
+  const normalized = rawStep / magnitude
+  const step = (normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10) * magnitude
+
+  // Redondeo a la precisión del paso: con paso 10.000 los ticks son enteros, y con
+  // pasos sub-unitarios (solo el caso degenerado de todo en cero) no se pierden.
+  const decimals = Math.max(0, -Math.floor(Math.log10(step)))
+  const round = (v: number) => Number(v.toFixed(decimals))
+
+  const niceMin = round(Math.floor(lo / step) * step)
+  const niceMax = round(Math.ceil(hi / step) * step)
+  const count = Math.round((niceMax - niceMin) / step)
+  const ticks = Array.from({ length: count + 1 }, (_, i) => round(niceMin + i * step))
+
+  return { min: niceMin, max: niceMax, step, ticks }
+}
+
 export function buildChart(points: SlrdHistoryPoint[], geo: ChartGeometry) {
   const values = points.flatMap((p) => [p.slrdInmediato, p.saldoContable])
   const yMin = Math.min(...values)
