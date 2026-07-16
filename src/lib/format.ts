@@ -15,3 +15,13 @@ export function formatSignedCLP(n: number, withPlus = false): string {
   if (withPlus && rounded > 0) return `+${formatCLP(rounded)}`
   return formatCLP(rounded)
 }
+
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+
+// Sin `new Date()` a propósito: parsear 'AAAA-MM-DD' da medianoche UTC y, con la
+// DB y el navegador en UTC pero la usuaria en Santiago, eso corre la fecha un día
+// (ver santiagoDate.ts). String-splitting puro: sin zona horaria no hay corrimiento.
+export function formatShortDate(dateKey: string): string {
+  const [, month, day] = dateKey.split('-')
+  return `${Number(day)} ${MESES[Number(month) - 1]}`
+}

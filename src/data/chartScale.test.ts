@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { filterByRange, buildChart } from './chartScale'
+import { filterByRange, buildChart, niceDomain } from './chartScale'
 import type { SlrdHistoryPoint } from './types'
 
 function point(date: string, slrd: number, contable: number): SlrdHistoryPoint {
@@ -38,15 +38,57 @@ describe('filterByRange', () => {
   })
 })
 
+describe('niceDomain', () => {
+  it('should_RoundToNiceBounds_When_GivenTheRealRange', () => {
+    // Datos reales: el SLRD fue de 115.000 a 103.780 entre el 9 y el 14 de julio.
+    expect(niceDomain(103780, 115000)).toEqual({
+      min: 100000, max: 120000, step: 10000, ticks: [100000, 110000, 120000],
+    })
+  })
+
+  it('should_ContainTheData_When_Rounded', () => {
+    const d = niceDomain(103780, 115000)
+
+    expect(d.min).toBeLessThanOrEqual(103780)
+    expect(d.max).toBeGreaterThanOrEqual(115000)
+  })
+
+  // El rango 0 hace Math.log10(0) === -Infinity y rompe todo el cálculo. No es
+  // teórico: el saldo contable es plano hoy y el SLRD puede serlo cualquier semana.
+  it('should_ExpandRange_When_SeriesIsFlat', () => {
+    const d = niceDomain(103780, 103780)
+
+    expect(Number.isFinite(d.step)).toBe(true)
+    expect(d.max).toBeGreaterThan(d.min)
+    expect(d.min).toBeLessThanOrEqual(103780)
+    expect(d.max).toBeGreaterThanOrEqual(103780)
+  })
+
+  it('should_SurviveAllZeroes_When_SeriesIsFlatAtZero', () => {
+    const d = niceDomain(0, 0)
+
+    expect(Number.isFinite(d.step)).toBe(true)
+    expect(d.max).toBeGreaterThan(d.min)
+  })
+
+  it('should_ShrinkStep_When_RangeIsSmall', () => {
+    const d = niceDomain(1000, 1050)
+
+    expect(d.step).toBeLessThan(100)
+  })
+})
+
 describe('buildChart', () => {
   const geo = { width: 300, height: 100 }
   const points = [point('2026-07-08', 0, 100), point('2026-07-09', 50, 150)]
 
-  it('should_ComputeDomainFromBothSeries_When_Built', () => {
+  // Los puntos tienen SLRD 0 y 50, contable 100 y 150. El dominio sale solo del
+  // SLRD: antes el contable fijaba yMax en 150 y aplastaba la línea contra el piso.
+  it('should_ComputeDomainFromSlrdOnly_When_Built', () => {
     const chart = buildChart(points, geo)
 
     expect(chart.yMin).toBe(0)
-    expect(chart.yMax).toBe(150)
+    expect(chart.yMax).toBe(50)
   })
 
   it('should_MapFirstAndLastX_ToEdges', () => {
@@ -69,17 +111,24 @@ describe('buildChart', () => {
     expect(chart.x(2)).toBe(300)
   })
 
-  it('should_MapMaxValue_ToTopAndMinToBottom', () => {
+  it('should_MapDomainMax_ToTop_And_DomainMin_ToBottom', () => {
     const chart = buildChart(points, geo)
 
-    expect(chart.y(150)).toBe(0)   // valor máximo arriba (y=0)
-    expect(chart.y(0)).toBe(100)   // valor mínimo abajo (y=height)
+    expect(chart.y(chart.yMax)).toBe(0)     // tope del dominio arriba (y=0)
+    expect(chart.y(chart.yMin)).toBe(100)   // piso del dominio abajo (y=height)
   })
 
-  it('should_BuildTwoSeriesPaths_When_Built', () => {
+  it('should_BuildOneLinePathAndOneClosedAreaPath_When_Built', () => {
     const chart = buildChart(points, geo)
 
-    expect(chart.series.map((s) => s.key)).toEqual(['slrdInmediato', 'saldoContable'])
-    expect(chart.series[0].path.startsWith('M')).toBe(true)
+    expect(chart.path.startsWith('M')).toBe(true)
+    expect(chart.areaPath.endsWith('Z')).toBe(true)
+  })
+
+  it('should_ExposeTicksForGridlines_When_Built', () => {
+    const chart = buildChart(points, geo)
+
+    expect(chart.ticks[0]).toBe(chart.yMin)
+    expect(chart.ticks[chart.ticks.length - 1]).toBe(chart.yMax)
   })
 })
