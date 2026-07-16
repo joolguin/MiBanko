@@ -148,8 +148,18 @@ sobreingeniería. A reevaluar si el historial crece a cientos de puntos.
 - `should_ShowMinMaxAxesAndFirstLastDates_When_GivenTwoOrMorePoints` (espera `$250`,
   el máximo del contable)
 
-**Tests que NO se tocan**: tooltip, pin/hover y espaciado por fecha real. Ese
-comportamiento se conserva entero.
+**Tests de tooltip a ajustar sin cambiar lo que prueban**: hoy afirman
+`screen.getByText('$150')`. Con los ticks del eje mostrando `$100`/`$150` y la
+etiqueta directa del último punto, ese texto pasa a aparecer tres veces y
+`getByText` falla por ambigüedad. Se le agrega `data-testid="tooltip"` al
+contenedor y las aserciones se acotan con `within(tooltip)`. Es una mejora: pasan
+a afirmar que el valor está **en el tooltip**, no que está en algún lado de la
+pantalla. El comportamiento probado no cambia.
+
+**Tests que NO se tocan**: el espaciado por fecha real
+(`should_SpaceXByRealDate_When_DaysAreMissing`), el mapeo de X a los bordes, y
+`should_ToggleWithOneClick_When_MouseLeavesPinnedPointBeforeRetapping` (no afirma
+montos, solo la fecha del tooltip).
 
 **Verificación en navegador**:
 
