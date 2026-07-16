@@ -69,7 +69,7 @@ export function SlrdLineChart({ points }: { points: SlrdHistoryPoint[] }) {
               <line x1={0} y1={chart.y(tick)} x2={PLOT.width} y2={chart.y(tick)}
                 className="stroke-ink-line" strokeWidth={1} />
               <text x={-8} y={chart.y(tick)} dy="0.32em" textAnchor="end"
-                className="fill-zinc-500 font-mono" fontSize={9}>{formatCLP(tick)}</text>
+                className="fill-muted font-mono" fontSize={9}>{formatCLP(tick)}</text>
             </g>
           ))}
 
@@ -98,10 +98,10 @@ export function SlrdLineChart({ points }: { points: SlrdHistoryPoint[] }) {
             />
           ))}
 
-          <text x={0} y={PLOT.height + 16} className="fill-zinc-500" fontSize={9}
+          <text x={0} y={PLOT.height + 16} className="fill-muted" fontSize={9}
             data-testid="chart-first-date">{formatShortDate(firstPoint.snapshotDate)}</text>
           <text x={PLOT.width} y={PLOT.height + 16} textAnchor="end"
-            className="fill-zinc-500" fontSize={9}
+            className="fill-muted" fontSize={9}
             data-testid="chart-last-date">{formatShortDate(lastPoint.snapshotDate)}</text>
         </g>
       </svg>
@@ -114,16 +114,16 @@ export function SlrdLineChart({ points }: { points: SlrdHistoryPoint[] }) {
             <MoneyText value={active.slrdInmediato} className="text-accent-bright" />
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">saldo contable</span>
-            <MoneyText value={active.saldoContable} className="text-zinc-500" />
+            <span className="text-muted">saldo contable</span>
+            <MoneyText value={active.saldoContable} className="text-muted" />
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">deuda facturada</span>
-            <MoneyText value={active.deudaFacturada} className="text-zinc-500" />
+            <span className="text-muted">deuda facturada</span>
+            <MoneyText value={active.deudaFacturada} className="text-muted" />
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">deuda no facturada</span>
-            <MoneyText value={active.deudaNoFacturada} className="text-zinc-500" />
+            <span className="text-muted">deuda no facturada</span>
+            <MoneyText value={active.deudaNoFacturada} className="text-muted" />
           </div>
         </div>
       )}

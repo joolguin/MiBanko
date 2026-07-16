@@ -6,7 +6,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, signIn } = useAuth()
   if (loading) {
     return <main className="min-h-[100dvh] flex items-center justify-center">
-      <p className="text-zinc-600 text-sm">Cargando…</p>
+      <p className="text-faint text-sm">Cargando…</p>
     </main>
   }
   if (!session) return <LoginScreen signIn={signIn} />

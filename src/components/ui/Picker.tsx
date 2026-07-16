@@ -13,7 +13,7 @@ export function Picker({ label, onClick, falta }: Props) {
         falta ? 'border-dashed border-accent text-accent-bright' : 'border-ink-line bg-ink-2 text-zinc-200'
       }`}>
       {label}
-      <CaretDown size={12} weight="bold" className="text-zinc-500" aria-hidden="true" />
+      <CaretDown size={12} weight="bold" className="text-muted" aria-hidden="true" />
     </button>
   )
 }

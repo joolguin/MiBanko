@@ -32,7 +32,7 @@ export function PayCycleSheet({ cycle, santanderAccountId, lastSantanderBalance,
   return (
     <BottomSheet open={!!cycle} title="Marcar pagada — nuevo saldo Santander" onClose={onClose}>
       <div className="flex flex-col gap-3">
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-muted">
           Propuesto: último saldo − boleta. El SLRD no cambia al pagar (esa deuda ya la debías).
         </p>
         <MoneyText value={saldo} className="text-3xl text-zinc-50" />

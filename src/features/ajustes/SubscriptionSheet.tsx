@@ -56,7 +56,7 @@ export function SubscriptionSheet({ open, initial, onClose }: Props) {
           className="bg-ink-2 border border-ink-line rounded-lg px-3 py-2.5 outline-none focus:border-accent" />
 
         <div>
-          <p className="text-[11px] uppercase tracking-[0.12em] text-zinc-600 mb-1">monto</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-faint mb-1">monto</p>
           <MoneyText value={amount} className="text-3xl text-zinc-50" />
         </div>
 

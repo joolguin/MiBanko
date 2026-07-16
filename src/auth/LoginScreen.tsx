@@ -21,7 +21,7 @@ export function LoginScreen({ signIn }: Props) {
 
   return (
     <main className="min-h-[100dvh] flex flex-col justify-center px-6 font-sans">
-      <p className="text-xs uppercase tracking-widest text-zinc-500 mb-2">MiBanko</p>
+      <p className="text-xs uppercase tracking-widest text-muted mb-2">MiBanko</p>
       <h1 className="text-3xl tracking-tight mb-8">Tu plata, de verdad.</h1>
       <form onSubmit={onSubmit} className="flex flex-col gap-4 max-w-sm">
         <div className="flex flex-col gap-2">

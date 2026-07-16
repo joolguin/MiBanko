@@ -30,7 +30,7 @@ export function SnapshotsScreen() {
 
   return (
     <section className="px-6 pt-8 flex flex-col min-h-[100dvh]">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600 mb-4">snapshots de saldo</p>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-faint mb-4">snapshots de saldo</p>
       <div className="flex flex-col gap-3">
         {relevant.map((a) => (
           <button key={a.id} onClick={() => setActive(a.id)}

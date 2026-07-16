@@ -65,7 +65,7 @@ export function RegistroScreen() {
     // quedaba pegado al borde inferior, donde vive la barra de gestos.
     <section className="px-6 pt-8 pb-6 flex flex-col min-h-[100dvh]">
       <header className="flex items-center justify-between">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">registrar gasto</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-faint">registrar gasto</p>
         <button type="button" onClick={() => nav(-1)} aria-label="Cancelar"
           className="-mr-3 p-3 text-zinc-400 active:scale-[0.9] transition-transform">
           <X size={20} />
@@ -89,7 +89,7 @@ export function RegistroScreen() {
 
       <input value={description} onChange={(e) => setDescription(e.target.value)}
         placeholder="Descripción (opcional)"
-        className="mt-4 bg-transparent border-b border-ink-line py-2 text-sm outline-none focus:border-accent placeholder:text-zinc-600" />
+        className="mt-4 bg-transparent border-b border-ink-line py-2 text-sm outline-none focus:border-accent placeholder:text-faint" />
 
       <div className="mt-auto pt-6">
         <NumberPad value={amount} onChange={setAmount} />

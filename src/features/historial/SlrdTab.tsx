@@ -35,7 +35,7 @@ export function SlrdTab() {
 
       {!history.isLoading && !history.isError && points.length < MIN_POINTS_FOR_CHART && (
         <div className="mt-4">
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted">
             El historial se arma solo: guardamos el SLRD de cada día. Volvé mañana para ver la tendencia.
           </p>
           {points.length === 1 && (
@@ -61,7 +61,7 @@ export function SlrdTab() {
           {visible.length >= MIN_POINTS_FOR_CHART ? (
             <SlrdLineChart points={visible} />
           ) : (
-            <p className="text-sm text-zinc-500 mt-4">Sin datos en este rango.</p>
+            <p className="text-sm text-muted mt-4">Sin datos en este rango.</p>
           )}
         </>
       )}

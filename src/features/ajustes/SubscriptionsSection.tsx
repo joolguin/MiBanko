@@ -17,7 +17,7 @@ export function SubscriptionsSection() {
   return (
     <section>
       <div className="flex items-center justify-between">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-600">suscripciones fijas</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-faint">suscripciones fijas</p>
         <button onClick={() => setEditing('new')} aria-label="Agregar suscripción"
           className="flex items-center gap-1 text-sm text-accent-bright active:scale-[0.98]">
           <Plus size={16} weight="bold" /> Agregar
@@ -39,7 +39,7 @@ export function SubscriptionsSection() {
       )}
 
       {subs.data && subs.data.length === 0 && (
-        <p className="text-sm text-zinc-500 mt-3">No tenés suscripciones. Agregá la primera.</p>
+        <p className="text-sm text-muted mt-3">No tenés suscripciones. Agregá la primera.</p>
       )}
 
       <div className="mt-2">
@@ -47,7 +47,7 @@ export function SubscriptionsSection() {
           <div key={s.id} className={`py-3 border-t border-ink-line flex items-center justify-between ${s.isActive ? '' : 'opacity-45'}`}>
             <button onClick={() => setEditing(s)} className="text-left flex flex-col gap-0.5">
               <span className="text-sm text-zinc-200">{s.name}</span>
-              <span className="text-[11px] text-zinc-500">día {s.chargeDayOfMonth}{s.isActive ? '' : ' · pausada'}</span>
+              <span className="text-[11px] text-muted">día {s.chargeDayOfMonth}{s.isActive ? '' : ' · pausada'}</span>
             </button>
             <div className="flex items-center gap-3">
               <MoneyText value={s.amount} className="text-sm text-zinc-300" />
@@ -56,7 +56,7 @@ export function SubscriptionsSection() {
                 {s.isActive ? 'Pausar' : 'Activar'}
               </button>
               <button onClick={() => del.mutate(s.id)} aria-label={`Borrar ${s.name}`}
-                className="text-zinc-500 active:scale-[0.9]">
+                className="text-muted active:scale-[0.9]">
                 <Trash size={16} />
               </button>
             </div>
