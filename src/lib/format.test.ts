@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatCLP, formatSignedCLP } from './format'
+import { formatCLP, formatSignedCLP, formatShortDate } from './format'
 
 describe('formatCLP', () => {
   it('should_FormatThousands_When_PositiveInteger', () => {
@@ -25,5 +25,25 @@ describe('formatSignedCLP', () => {
   })
   it('should_NoPlus_When_ZeroAndWithPlus', () => {
     expect(formatSignedCLP(0, true)).toBe('$0')
+  })
+})
+
+describe('formatShortDate', () => {
+  it('should_FormatDayAndShortMonth', () => {
+    expect(formatShortDate('2026-07-09')).toBe('9 jul')
+  })
+
+  it('should_StripLeadingZero_When_DayIsSingleDigit', () => {
+    expect(formatShortDate('2026-01-05')).toBe('5 ene')
+  })
+
+  it('should_FormatLastMonth_When_December', () => {
+    expect(formatShortDate('2026-12-31')).toBe('31 dic')
+  })
+
+  // Con `new Date('2026-03-01')` (medianoche UTC) + toLocaleDateString en
+  // Santiago (UTC−3/−4) esto daría "28 feb": la fecha se corre un día.
+  it('should_NotShiftDay_When_FirstOfMonth', () => {
+    expect(formatShortDate('2026-03-01')).toBe('1 mar')
   })
 })
