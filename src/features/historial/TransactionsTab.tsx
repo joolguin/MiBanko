@@ -3,6 +3,7 @@ import { useMonthTransactions } from '../../data/useMonthTransactions'
 import { MonthNav } from './MonthNav'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { MoneyText } from '../../components/ui/MoneyText'
+import { EdgeFadeScroller } from '../../components/ui/EdgeFadeScroller'
 import type { MonthKey, MonthTx, TxType } from '../../data/types'
 
 const ALL = 'todas'
@@ -66,29 +67,31 @@ export function TransactionsTab(
 
       {!txs.isLoading && !txs.isError && (
         <>
-          <div className="flex gap-2 mt-4 text-sm">
-            <label className="sr-only" htmlFor="f-cat">Categoría</label>
-            <select id="f-cat" aria-label="Categoría" value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="bg-ink-2 border border-ink-line rounded-lg px-2 py-1.5 text-zinc-300">
-              <option value={ALL}>Todas</option>
-              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <label className="sr-only" htmlFor="f-type">Tipo</label>
-            <select id="f-type" aria-label="Tipo" value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="bg-ink-2 border border-ink-line rounded-lg px-2 py-1.5 text-zinc-300">
-              <option value={ALL}>Todos</option>
-              {types.map((t) => <option key={t} value={t}>{TYPE_LABELS[t as TxType]}</option>)}
-            </select>
-            <label className="sr-only" htmlFor="f-acc">Cuenta</label>
-            <select id="f-acc" aria-label="Cuenta" value={account}
-              onChange={(e) => setAccount(e.target.value)}
-              className="bg-ink-2 border border-ink-line rounded-lg px-2 py-1.5 text-zinc-300">
-              <option value={ALL}>Todas</option>
-              {accounts.map((a) => <option key={a} value={a}>{a}</option>)}
-            </select>
-          </div>
+          <EdgeFadeScroller className="mt-4">
+            <div className="flex gap-2 w-max text-sm">
+              <label className="sr-only" htmlFor="f-cat">Categoría</label>
+              <select id="f-cat" aria-label="Categoría" value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="bg-ink-2 border border-ink-line rounded-lg px-2 py-1.5 text-zinc-300">
+                <option value={ALL}>Todas</option>
+                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="f-type">Tipo</label>
+              <select id="f-type" aria-label="Tipo" value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="bg-ink-2 border border-ink-line rounded-lg px-2 py-1.5 text-zinc-300">
+                <option value={ALL}>Todos</option>
+                {types.map((t) => <option key={t} value={t}>{TYPE_LABELS[t as TxType]}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="f-acc">Cuenta</label>
+              <select id="f-acc" aria-label="Cuenta" value={account}
+                onChange={(e) => setAccount(e.target.value)}
+                className="bg-ink-2 border border-ink-line rounded-lg px-2 py-1.5 text-zinc-300">
+                <option value={ALL}>Todas</option>
+                {accounts.map((a) => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
+          </EdgeFadeScroller>
 
           {visible.length === 0 ? (
             <p className="text-sm text-muted mt-6">Sin movimientos con estos filtros.</p>
