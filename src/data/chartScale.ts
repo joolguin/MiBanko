@@ -34,13 +34,6 @@ export interface ChartGeometry {
   height: number
 }
 
-export interface Series {
-  key: 'slrdInmediato' | 'saldoContable'
-  path: string
-}
-
-const SERIES_KEYS: Series['key'][] = ['slrdInmediato', 'saldoContable']
-
 export interface NiceDomain { min: number; max: number; step: number; ticks: number[] }
 
 // Redondea el dominio a topes y pasos leíbles (100.000 / 110.000 / 120.000) en vez
@@ -74,10 +67,11 @@ export function niceDomain(min: number, max: number, tickCount = 3): NiceDomain 
 }
 
 export function buildChart(points: SlrdHistoryPoint[], geo: ChartGeometry) {
-  const values = points.flatMap((p) => [p.slrdInmediato, p.saldoContable])
-  const yMin = Math.min(...values)
-  const yMax = Math.max(...values)
-  const span = yMax - yMin || 1 // evita división por cero con una sola muestra plana
+  // Solo el SLRD: incluir el saldo contable (24× más grande) fijaba el techo del
+  // eje y dejaba la línea del SLRD con 0,7px de recorrido en 160px de alto.
+  const values = points.map((p) => p.slrdInmediato)
+  const domain = niceDomain(Math.min(...values), Math.max(...values))
+  const span = domain.max - domain.min || 1
 
   // Eje X proporcional a la fecha real (no al índice): los días faltantes dejan
   // un hueco proporcional en vez de equiespaciar los puntos. points viene ordenado
@@ -86,14 +80,12 @@ export function buildChart(points: SlrdHistoryPoint[], geo: ChartGeometry) {
   const daySpan = dayNumber(points[points.length - 1].snapshotDate) - firstDay || 1
 
   const x = (i: number) => ((dayNumber(points[i].snapshotDate) - firstDay) / daySpan) * geo.width
-  const y = (value: number) => geo.height - ((value - yMin) / span) * geo.height
+  const y = (value: number) => geo.height - ((value - domain.min) / span) * geo.height
 
-  const series: Series[] = SERIES_KEYS.map((key) => ({
-    key,
-    path: points
-      .map((p, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(p[key])}`)
-      .join(' '),
-  }))
+  const path = points
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${x(i)} ${y(p.slrdInmediato)}`)
+    .join(' ')
+  const areaPath = `${path} L ${x(points.length - 1)} ${geo.height} L ${x(0)} ${geo.height} Z`
 
-  return { yMin, yMax, series, x, y }
+  return { yMin: domain.min, yMax: domain.max, ticks: domain.ticks, path, areaPath, x, y }
 }
