@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { BottomSheet } from '../../components/ui/BottomSheet'
 import { NumberPad } from '../../components/ui/NumberPad'
 import { MoneyText } from '../../components/ui/MoneyText'
+import { Chip } from '../../components/ui/Chip'
 import { useSaveBudget, useDeleteBudget } from '../../data/useBudgets'
 import { useCategoryAverages } from '../../data/useCategoryAverages'
 import { computeCategoryAverages } from '../../data/categoryAverages'
@@ -56,12 +57,8 @@ export function BudgetSheet({ open, categoryId, categoryName, initialAmount, onC
           <div>
             <div className="flex gap-2 mb-2">
               {([3, 6] as const).map((w) => (
-                <button key={w} type="button" onClick={() => setWindowMonths(w)}
-                  className={`rounded-lg px-3 py-1 text-xs active:scale-[0.98] ${
-                    windowMonths === w ? 'bg-accent text-accent-deep' : 'border border-ink-line text-zinc-400'
-                  }`}>
-                  {w} meses
-                </button>
+                <Chip key={w} variant="tab" label={`${w} meses`}
+                  active={windowMonths === w} onClick={() => setWindowMonths(w)} />
               ))}
             </div>
             <button type="button" onClick={() => setAmount(Math.round(suggestion.avg))}

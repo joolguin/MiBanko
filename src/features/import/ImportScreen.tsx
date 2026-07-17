@@ -9,6 +9,7 @@ import { flagDuplicates } from './importDedup'
 import { mapBankCategory } from './bankCategoryMap'
 import { PreviewTable, type PreviewRow } from './PreviewTable'
 import { MoneyText } from '../../components/ui/MoneyText'
+import { Chip } from '../../components/ui/Chip'
 import type { RawMovement } from '../../parsers/types'
 import type { Category } from '../../data/types'
 
@@ -113,16 +114,10 @@ export function ImportScreen() {
       <p className="text-[11px] uppercase tracking-[0.14em] text-faint">importar movimientos</p>
 
       <div className="flex gap-2">
-        <button onClick={() => selectSource('bice_visa')}
-          className={`rounded-lg px-3 py-1.5 text-sm ${source === 'bice_visa'
-            ? 'bg-accent text-accent-deep' : 'border border-ink-line text-zinc-400'}`}>
-          BICE Visa
-        </button>
-        <button onClick={() => selectSource('santander_vista')}
-          className={`rounded-lg px-3 py-1.5 text-sm ${source === 'santander_vista'
-            ? 'bg-accent text-accent-deep' : 'border border-ink-line text-zinc-400'}`}>
-          Santander
-        </button>
+        <Chip variant="tab" label="BICE Visa"
+          active={source === 'bice_visa'} onClick={() => selectSource('bice_visa')} />
+        <Chip variant="tab" label="Santander"
+          active={source === 'santander_vista'} onClick={() => selectSource('santander_vista')} />
       </div>
 
       <label className="text-sm text-zinc-300">
