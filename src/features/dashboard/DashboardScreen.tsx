@@ -2,19 +2,30 @@ import { useNavigate } from 'react-router-dom'
 import { useSlrd } from '../../data/useSlrd'
 import { useLatestSnapshotAge } from '../../data/useLatestSnapshotAge'
 import { useUserSettings, DEFAULT_FRESH_LIMIT_DAYS } from '../../data/useUserSettings'
+import { useUnpaidCycles } from '../../data/useUnpaidCycles'
 import { isStale } from '../../data/freshness'
+import { daysUntil } from '../../data/dueDates'
+import { santiagoToday } from '../../data/santiagoDate'
 import { CountUp } from '../../components/motion/CountUp'
 import { MoneyText } from '../../components/ui/MoneyText'
 import { Skeleton } from '../../components/ui/Skeleton'
+import { formatShortDate } from '../../lib/format'
 import { WarningCircle } from '@phosphor-icons/react'
+
+const DUE_SOON_DAYS = 3
 
 export function DashboardScreen() {
   const nav = useNavigate()
   const slrd = useSlrd()
   const age = useLatestSnapshotAge()
   const settings = useUserSettings()
+  const unpaid = useUnpaidCycles()
   const limit = settings.data?.freshLimitDays ?? DEFAULT_FRESH_LIMIT_DAYS
   const stale = isStale(age.data ?? null, limit)
+
+  // useUnpaidCycles ordena por due_date: el primero es el próximo vencimiento.
+  const nextDue = (unpaid.data ?? [])[0] ?? null
+  const dueDays = nextDue ? daysUntil(nextDue.dueDate, santiagoToday(new Date())) : null
 
   if (slrd.isLoading) {
     return (
@@ -69,25 +80,33 @@ export function DashboardScreen() {
         </div>
       ) : (
         <>
+          {/* Bloque 1: la respuesta. Nada más en su línea de vista. */}
           <div className="mt-8">
             <p className="text-[11px] uppercase tracking-[0.14em] text-faint">disponible de verdad</p>
             <CountUp value={d.slrdInmediato}
               className={`block text-[46px] leading-none mt-1.5 ${stale ? 'text-muted' : 'text-accent-bright'}`} />
             {stale && <p className="text-[11px] text-[var(--fresh-warn)] mt-1">estimado · snapshot viejo</p>}
-            <div className="flex items-baseline gap-2 mt-2.5">
+          </div>
+
+          {/* Bloque 2: el contexto — tachado y total, un escalón abajo del héroe. */}
+          <div className="mt-8">
+            <div className="flex items-baseline gap-2">
               <MoneyText value={d.saldoContable} className="text-base text-faint line-through decoration-debt" />
               <span className="text-xs text-faint">lo que el banco te muestra</span>
             </div>
+            <div className="flex items-baseline justify-between mt-2.5">
+              <span className="text-sm text-zinc-400">Con Fintual <span className="text-faint">(total)</span></span>
+              <MoneyText value={d.slrdTotal} className="text-[17px] text-zinc-200" />
+            </div>
           </div>
 
-          <div className="mt-6 py-3.5 border-t border-ink-line flex items-baseline justify-between">
-            <span className="text-sm text-zinc-400">Con Fintual <span className="text-faint">(total)</span></span>
-            <MoneyText value={d.slrdTotal} className="text-[17px] text-zinc-200" />
-          </div>
-
-          <div className="mt-4">
-            <p className="text-[11px] uppercase tracking-[0.12em] text-faint mb-1">deuda comprometida</p>
-            <Row label="Facturado BICE" hint="pendiente de pago" amount={d.deudaFacturada} />
+          {/* Bloque 3: la deuda, como superficie propia. */}
+          <div className="mt-8 bg-ink-2 border border-ink-line rounded-xl px-4 pt-3.5 pb-1">
+            <p className="text-[11px] uppercase tracking-[0.12em] text-faint mb-2.5">deuda comprometida</p>
+            <Row label="Facturado BICE"
+              hint={nextDue ? `vence ${formatShortDate(nextDue.dueDate)}` : 'pendiente de pago'}
+              warn={dueDays !== null && dueDays <= DUE_SOON_DAYS}
+              amount={d.deudaFacturada} />
             <Row label="Ciclo actual" hint="sin facturar" amount={d.deudaNoFacturada} />
           </div>
         </>
@@ -96,13 +115,13 @@ export function DashboardScreen() {
   )
 }
 
-function Row({ label, hint, amount }: { label: string; hint: string; amount: number }) {
+function Row({ label, hint, amount, warn }: { label: string; hint: string; amount: number; warn?: boolean }) {
   return (
     <div className="py-3.5 border-t border-ink-line flex items-center justify-between">
       <div className="flex flex-col gap-0.5">
         <span className="text-sm text-zinc-200">{label}</span>
         <span className="text-[11px] text-muted flex items-center gap-1">
-          <WarningCircle size={12} className="text-[var(--fresh-warn)]" />{hint}
+          {warn && <WarningCircle size={12} className="text-[var(--fresh-warn)]" />}{hint}
         </span>
       </div>
       <MoneyText value={-amount} signed className="text-[15px] text-debt" />

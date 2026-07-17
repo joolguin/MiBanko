@@ -6,9 +6,11 @@ vi.mock('react-router-dom', () => ({ useNavigate: () => vi.fn() }))
 vi.mock('../../data/useSlrd')
 vi.mock('../../data/useLatestSnapshotAge')
 vi.mock('../../data/useUserSettings')
+vi.mock('../../data/useUnpaidCycles')
 import { useSlrd } from '../../data/useSlrd'
 import { useLatestSnapshotAge } from '../../data/useLatestSnapshotAge'
 import { useUserSettings } from '../../data/useUserSettings'
+import { useUnpaidCycles } from '../../data/useUnpaidCycles'
 
 const LOADED = {
   isLoading: false, isError: false,
@@ -22,6 +24,7 @@ const LOADED = {
 beforeEach(() => {
   vi.mocked(useLatestSnapshotAge).mockReturnValue({ data: 2 } as any)
   vi.mocked(useUserSettings).mockReturnValue({ data: { freshLimitDays: 4 } } as any)
+  vi.mocked(useUnpaidCycles).mockReturnValue({ data: [] } as any)
 })
 
 describe('DashboardScreen', () => {
@@ -57,5 +60,26 @@ describe('DashboardScreen', () => {
     vi.mocked(useSlrd).mockReturnValue(LOADED as any)   // age 2, umbral 4 -> fresco
     render(<DashboardScreen />)
     expect(screen.queryByText(/puede estar desactualizado/i)).not.toBeInTheDocument()
+  })
+
+  it('should_ShowFallbackHint_When_NoUnpaidCycle', () => {
+    vi.mocked(useSlrd).mockReturnValue(LOADED as any)
+    render(<DashboardScreen />)
+    expect(screen.getByText('pendiente de pago')).toBeInTheDocument()
+  })
+
+  it('should_ShowDueDate_When_UnpaidCycleExists', () => {
+    vi.useFakeTimers({ now: new Date('2026-07-10T15:00:00Z'), toFake: ['Date'] })
+    vi.mocked(useUnpaidCycles).mockReturnValue({ data: [
+      { id: 'c1', cycleStart: '2026-06-01', cycleEnd: '2026-06-25', dueDate: '2026-07-20', billedAmount: 298900, isPaid: false },
+    ] } as any)
+    vi.mocked(useSlrd).mockReturnValue(LOADED as any)
+    try {
+      render(<DashboardScreen />)
+      expect(screen.getByText('vence 20 jul')).toBeInTheDocument()
+      expect(screen.queryByText('pendiente de pago')).not.toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
