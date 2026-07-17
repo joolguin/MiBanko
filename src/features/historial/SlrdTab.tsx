@@ -4,6 +4,7 @@ import { filterByRange, type ChartRange } from '../../data/chartScale'
 import { SlrdLineChart } from './SlrdLineChart'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { MoneyText } from '../../components/ui/MoneyText'
+import { Chip } from '../../components/ui/Chip'
 
 const MIN_POINTS_FOR_CHART = 2
 const RANGES: { value: ChartRange; label: string }[] = [
@@ -50,12 +51,8 @@ export function SlrdTab() {
         <>
           <div className="flex gap-2 mt-4">
             {RANGES.map((r) => (
-              <button key={r.value} onClick={() => setRange(r.value)}
-                className={`rounded-lg px-3 py-1.5 text-sm active:scale-[0.98] ${
-                  range === r.value ? 'bg-accent text-accent-deep' : 'border border-ink-line text-zinc-400'
-                }`}>
-                {r.label}
-              </button>
+              <Chip key={r.value} variant="tab" label={r.label}
+                active={range === r.value} onClick={() => setRange(r.value)} />
             ))}
           </div>
           {visible.length >= MIN_POINTS_FOR_CHART ? (
