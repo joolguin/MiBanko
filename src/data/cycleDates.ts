@@ -1,3 +1,4 @@
+import { daysUntil } from './dueDates'
 import type { BiceConfig, CycleDates } from './types'
 
 function fmt(d: Date): string {
@@ -37,4 +38,18 @@ export function deriveCycleDates(config: BiceConfig, closingDate: Date): CycleDa
   const dueDateDate = new Date(Date.UTC(dueY, dueM, dueDay))
 
   return { cycleStart: fmt(cycleStartDate), cycleEnd: fmt(cycleEndDate), dueDate: fmt(dueDateDate) }
+}
+
+export interface CycleProgress { day: number; total: number }
+
+// Posición de `today` dentro del ciclo abierto (el que todavía no llegó a su corte):
+// arranca el día siguiente al último corte y termina en el closingDay del mes siguiente.
+export function cycleProgress(config: BiceConfig, today: Date): CycleProgress {
+  const prevEnd = new Date(`${deriveCycleDates(config, today).cycleEnd}T00:00:00Z`)
+  const start = addDays(prevEnd, 1)
+  const end = new Date(Date.UTC(prevEnd.getUTCFullYear(), prevEnd.getUTCMonth() + 1, config.closingDay))
+
+  const total = daysUntil(fmt(end), start) + 1
+  const elapsed = daysUntil(fmt(today), start) + 1
+  return { day: Math.min(Math.max(elapsed, 1), total), total }
 }

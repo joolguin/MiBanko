@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useCurrentCycleTransactions } from '../../data/useCurrentCycle'
 import { useBiceConfig } from '../../data/useBiceConfig'
+import { cycleProgress } from '../../data/cycleDates'
+import { santiagoToday } from '../../data/santiagoDate'
 import { MoneyText } from '../../components/ui/MoneyText'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { BiceConfigSheet } from '../../components/BiceConfigSheet'
@@ -15,10 +17,21 @@ export function CicloScreen() {
   const [diff, setDiff] = useState<CloseCycleResult | null>(null)
 
   const hasConfig = !!config.data
+  const progress = config.data ? cycleProgress(config.data, santiagoToday(new Date())) : null
 
   return (
     <section className="px-6 pt-8">
       <p className="text-[11px] uppercase tracking-[0.14em] text-faint">ciclo actual — sin facturar</p>
+
+      {progress && (
+        <div className="mt-2.5 flex items-center gap-3">
+          <div className="flex-1 h-0.5 rounded-full bg-ink-line overflow-hidden">
+            <div className="h-full bg-accent rounded-full"
+              style={{ width: `${(progress.day / progress.total) * 100}%` }} />
+          </div>
+          <span className="text-[11px] text-muted shrink-0">día {progress.day} de {progress.total}</span>
+        </div>
+      )}
 
       {current.isLoading ? (
         <Skeleton className="h-8 w-40 mt-2" />

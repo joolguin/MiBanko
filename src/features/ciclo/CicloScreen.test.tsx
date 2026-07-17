@@ -35,5 +35,18 @@ describe('CicloScreen', () => {
     vi.mocked(useBiceConfig).mockReturnValue({ data: null, isLoading: false } as any)
     render(<MemoryRouter><CicloScreen /></MemoryRouter>)
     expect(screen.getByText(/configurá las fechas/i)).toBeInTheDocument()
+    expect(screen.queryByText(/día \d+ de \d+/)).not.toBeInTheDocument()
+  })
+
+  it('should_ShowCycleProgress_When_HasConfig', () => {
+    // Hoy fijo 16-jul con corte el 25: ciclo abierto 26-jun..25-jul -> día 21 de 30.
+    vi.useFakeTimers({ now: new Date('2026-07-16T15:00:00Z'), toFake: ['Date'] })
+    vi.mocked(useBiceConfig).mockReturnValue({ data: { closingDay: 25, dueDay: 15 }, isLoading: false } as any)
+    try {
+      render(<MemoryRouter><CicloScreen /></MemoryRouter>)
+      expect(screen.getByText('día 21 de 30')).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

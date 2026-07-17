@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { deriveCycleDates } from './cycleDates'
+import { deriveCycleDates, cycleProgress } from './cycleDates'
 import { santiagoToday } from './santiagoDate'
 
 const config = { closingDay: 25, dueDay: 15 }
@@ -36,5 +36,25 @@ describe('deriveCycleDates', () => {
     expect(deriveCycleDates(config, santiagoToday(instant))).toEqual({
       cycleStart: '2026-04-26', cycleEnd: '2026-05-25', dueDate: '2026-06-15',
     })
+  })
+})
+
+describe('cycleProgress', () => {
+  it('should_CountFromDayAfterLastCut_When_MidCycle', () => {
+    // Último corte 25-jun; ciclo abierto 26-jun..25-jul (30 días). El 16-jul es el día 21.
+    expect(cycleProgress(config, new Date(Date.UTC(2026, 6, 16)))).toEqual({ day: 21, total: 30 })
+  })
+  it('should_BeFirstDay_When_DayAfterCut', () => {
+    expect(cycleProgress(config, new Date(Date.UTC(2026, 6, 26)))).toEqual({ day: 1, total: 31 })
+  })
+  it('should_StartNextCycle_When_OnClosingDay', () => {
+    // El día del corte, deriveCycleDates ya da por cerrado ese ciclo: el abierto
+    // es 26-jul..25-ago (31 días) y todavía no arrancó -> clamp al día 1.
+    expect(cycleProgress(config, new Date(Date.UTC(2026, 6, 25)))).toEqual({ day: 1, total: 31 })
+  })
+  it('should_ClampToTotal_When_ElapsedOverruns', () => {
+    const p = cycleProgress(config, new Date(Date.UTC(2026, 1, 10)))
+    expect(p.day).toBeLessThanOrEqual(p.total)
+    expect(p.day).toBeGreaterThanOrEqual(1)
   })
 })
