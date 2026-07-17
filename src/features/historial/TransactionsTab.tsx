@@ -22,6 +22,24 @@ function displayAmount(tx: MonthTx): number {
   return tx.type === 'ingreso' ? tx.amount : -tx.amount
 }
 
+interface DayGroup { date: string; items: MonthTx[]; subtotal: number }
+
+// Agrupa movimientos consecutivos del mismo día (la lista ya viene ordenada por
+// fecha descendente) y acumula el subtotal con signo de exhibición.
+function groupByDay(txs: MonthTx[]): DayGroup[] {
+  const groups: DayGroup[] = []
+  for (const t of txs) {
+    const last = groups[groups.length - 1]
+    if (last && last.date === t.transactionDate) {
+      last.items.push(t)
+      last.subtotal += displayAmount(t)
+    } else {
+      groups.push({ date: t.transactionDate, items: [t], subtotal: displayAmount(t) })
+    }
+  }
+  return groups
+}
+
 export function TransactionsTab(
   { month, onMonthChange }: { month: MonthKey; onMonthChange: (m: MonthKey) => void },
 ) {
@@ -97,16 +115,26 @@ export function TransactionsTab(
           {visible.length === 0 ? (
             <p className="text-sm text-muted mt-6">Sin movimientos con estos filtros.</p>
           ) : (
-            <div className="mt-3" data-testid="tx-list">
-              {visible.map((t) => (
-                <div key={t.id} data-testid="tx-row"
-                  className="py-3 border-t border-ink-line flex justify-between items-center">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-sm text-zinc-200">{t.categoryName ?? TYPE_LABELS[t.type]}</span>
-                    <span className="text-[11px] text-muted">{formatShortDate(t.transactionDate)} · {t.accountName}</span>
+            <div className="mt-1" data-testid="tx-list">
+              {groupByDay(visible).map((g) => (
+                <div key={g.date} data-testid="tx-day">
+                  <div className="pt-5 pb-1.5 flex items-baseline justify-between">
+                    <span className="text-[11px] uppercase tracking-[0.12em] text-faint">
+                      {formatShortDate(g.date)}
+                    </span>
+                    <MoneyText value={g.subtotal} signed withPlus className="text-[11px] text-muted" />
                   </div>
-                  <MoneyText value={displayAmount(t)} signed withPlus
-                    className={`text-sm ${t.type === 'ingreso' ? 'text-accent-bright' : 'text-zinc-300'}`} />
+                  {g.items.map((t) => (
+                    <div key={t.id} data-testid="tx-row"
+                      className="py-3 border-t border-ink-line flex justify-between items-center">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm text-zinc-200">{t.categoryName ?? TYPE_LABELS[t.type]}</span>
+                        <span className="text-[11px] text-muted">{t.accountName}</span>
+                      </div>
+                      <MoneyText value={displayAmount(t)} signed withPlus
+                        className={`text-sm ${t.type === 'ingreso' ? 'text-accent-bright' : 'text-zinc-300'}`} />
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>

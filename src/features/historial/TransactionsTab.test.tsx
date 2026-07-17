@@ -45,7 +45,8 @@ describe('TransactionsTab', () => {
 
     render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
 
-    const amount = screen.getByText('+$900.000')
+    // El monto aparece también como subtotal del día; se asserta el de la fila.
+    const amount = within(screen.getByTestId('tx-row')).getByText('+$900.000')
     expect(amount).toBeInTheDocument()
     expect(amount.className).toContain('text-accent-bright')
   })
@@ -58,12 +59,12 @@ describe('TransactionsTab', () => {
 
     render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
 
-    const amount = screen.getByText('−$12.000')
+    const amount = within(screen.getByTestId('tx-row')).getByText('−$12.000')
     expect(amount).toBeInTheDocument()
     expect(amount.className).not.toContain('text-accent-bright')
   })
 
-  it('should_ShowShortDate_When_RenderingRow', () => {
+  it('should_ShowShortDateAsGroupHeader_When_RenderingRows', () => {
     vi.mocked(useMonthTransactions).mockReturnValue({
       isLoading: false, isError: false,
       data: [tx({ transactionDate: '2026-07-12', accountName: 'BICE' })],
@@ -71,8 +72,30 @@ describe('TransactionsTab', () => {
 
     render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
 
-    expect(screen.getByText('12 jul · BICE')).toBeInTheDocument()
+    // La fecha vive en el encabezado del grupo (una vez por día), no en cada fila.
+    expect(screen.getByText('12 jul')).toBeInTheDocument()
+    expect(within(screen.getByTestId('tx-row')).getByText('BICE')).toBeInTheDocument()
     expect(screen.queryByText(/2026-07-12/)).not.toBeInTheDocument()
+  })
+
+  it('should_GroupByDayWithSubtotal_When_SameDayTxs', () => {
+    vi.mocked(useMonthTransactions).mockReturnValue({
+      isLoading: false, isError: false,
+      data: [
+        tx({ transactionDate: '2026-07-12', amount: 12000 }),
+        tx({ transactionDate: '2026-07-12', amount: 8000 }),
+        tx({ transactionDate: '2026-07-11', amount: 5000 }),
+      ],
+    } as any)
+
+    render(<TransactionsTab month="2026-07" onMonthChange={vi.fn()} />)
+
+    const days = screen.getAllByTestId('tx-day')
+    expect(days).toHaveLength(2)
+    expect(within(days[0]).getByText('12 jul')).toBeInTheDocument()
+    expect(within(days[0]).getByText('−$20.000')).toBeInTheDocument()  // subtotal del día
+    expect(within(days[0]).getAllByTestId('tx-row')).toHaveLength(2)
+    expect(within(days[1]).getByText('11 jul')).toBeInTheDocument()
   })
 
   // Nota: los nombres de categoría aparecen dos veces (fila de la lista y <option>
